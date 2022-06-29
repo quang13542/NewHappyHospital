@@ -36,8 +36,8 @@ public class GamePanel extends JPanel implements ActionListener, Runnable{
 	static final int BLOCKS_WIDTH = 52;
 	static final int BLOCKS_HEIGHT = 28;
 	static final int BLOCKS_SIZE = 25; //32;  should be odd for better performance
-	static final int SCREEN_WIDTH = 52 * BLOCKS_SIZE;
-	static final int SCREEN_HEIGHT = 28 * BLOCKS_SIZE;
+	static final int SCREEN_WIDTH = BLOCKS_WIDTH * BLOCKS_SIZE;
+	static final int SCREEN_HEIGHT = BLOCKS_HEIGHT * BLOCKS_SIZE;
 	static final int dir_x[] = {0, 1, 0, -1};
 	static final int dir_y[] = {-1, 0, 1, 0};
 	static final int Delay = 10;
@@ -68,7 +68,7 @@ public class GamePanel extends JPanel implements ActionListener, Runnable{
 	
 	private Timer timer;
 	private int start_point_x[] = {1, 1};
-	private int start_point_y[] = {14, 13};
+	private int start_point_y[] = {13, 14};
 	private agv player[];
 	
 	private Image wallpng, dooruppng, doordownpng, doorrightpng, doorleftpng, bedpng, gatepng, elevatorpng, roompng, groundpng, agvpng;
@@ -298,7 +298,31 @@ public class GamePanel extends JPanel implements ActionListener, Runnable{
 	//            showIntroScreen(g2d);
 	//        }
 	
-	        g2d.drawImage(ii, 5, 5, this);
+	        
+	        if (won || enemyWon) {
+//				Graphics2D g2 = (Graphics2D) g;
+
+				g.setColor(Color.RED);
+				g.setFont(largerFont);
+				Graphics2D g2 = (Graphics2D) g;
+				g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+				if (won) {
+					g.drawString(wonString, 2*BLOCKS_WIDTH , 2*BLOCKS_HEIGHT );
+					repaint();
+				} else if (enemyWon) {
+					g.drawString(enemyWonString, 2*BLOCKS_WIDTH , 2*BLOCKS_HEIGHT );
+					repaint();
+				}
+			}
+			if (tie) {
+				g.setColor(Color.BLACK);
+				g.setFont(largerFont);
+				Graphics2D g2 = (Graphics2D) g;
+				g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+				g.drawString(tieString, 2*BLOCKS_WIDTH , 2*BLOCKS_HEIGHT );
+				repaint();
+			}
+			g2d.drawImage(ii, 5, 5, this);
 	        Toolkit.getDefaultToolkit().sync();
 	        g2d.dispose();
 		}
@@ -319,6 +343,8 @@ public class GamePanel extends JPanel implements ActionListener, Runnable{
 	
 	private void step() {
 		int pos = (int)( (player[Math.max(0, player_id)].getX()) / BLOCKS_SIZE ) + ( (int)( (player[Math.max(0, player_id)].getY() ) / BLOCKS_SIZE ) ) * BLOCKS_WIDTH;
+		int cur_x = player[Math.max(0, player_id)].getX();
+		int cur_y = player[Math.max(0, player_id)].getY();
 		if(path[pos] == 12 || path[pos] == 20 || path[pos] == 28 || path[pos] == 36) {
 			player[Math.max(0, player_id)].move(path[pos]);
 		}
@@ -339,10 +365,10 @@ public class GamePanel extends JPanel implements ActionListener, Runnable{
 					path[(player[Math.max(0, player_id)].getX() +dir_x[0]*BLOCKS_SIZE)/BLOCKS_SIZE + ((int)((player[Math.max(0, player_id)].getY() +dir_y[0]*BLOCKS_SIZE)/BLOCKS_SIZE))*BLOCKS_WIDTH],
 					path[(player[Math.max(0, player_id)].getX() +dir_x[1]*BLOCKS_SIZE)/BLOCKS_SIZE + ((int)((player[Math.max(0, player_id)].getY() +dir_y[1]*BLOCKS_SIZE)/BLOCKS_SIZE))*BLOCKS_WIDTH]); 
 		}
-		if(pos != (int)( (player[Math.max(0, player_id)].getX()) / BLOCKS_SIZE ) + ( (int)( (player[Math.max(0, player_id)].getY() ) / BLOCKS_SIZE ) ) * BLOCKS_WIDTH) 
+		if(player[Math.max(0, player_id)].getX() != cur_x || player[Math.max(0, player_id)].getY() != cur_y) 
 		{
 			try {
-				dos.writeInt(pos);
+				dos.writeInt(player[Math.max(0, player_id)].getX() + player[Math.max(0, player_id)].getY()*SCREEN_WIDTH);
 				dos.flush();
 			} catch (IOException e1) {
 				errors++;
@@ -350,6 +376,7 @@ public class GamePanel extends JPanel implements ActionListener, Runnable{
 			}
 		}
 		repaint( player[Math.max(0, player_id)].getX() - BLOCKS_SIZE/2 , player[Math.max(0, player_id)].getY() - BLOCKS_SIZE/2, BLOCKS_SIZE + 2, BLOCKS_SIZE + 2);
+		if(accepted) checkForWin();
 	}
 	
 	
@@ -386,44 +413,50 @@ public class GamePanel extends JPanel implements ActionListener, Runnable{
 	void tick()
 	{
 		if (errors >= 10) unableToCommunicateWithOpponent = true;
-
-		if (!unableToCommunicateWithOpponent) {
-//			try {
+		if (!unableToCommunicateWithOpponent && accepted) {
+			try {
 				
-//				int pos = dis.readInt();
-//				int y = pos / BLOCKS_WIDTH * BLOCKS_SIZE;
-//				int x = (pos - y/BLOCKS_WIDTH * BLOCKS_SIZE) * BLOCKS_SIZE;
-//				if (circle) spaces[space] = "X";
-//				else spaces[space] = "O";
-//				player[1-player_id].setX(x);
-//				player[1-player_id].setY(y);
+				int pos = dis.readInt();
+				int y = pos / SCREEN_WIDTH;
+				int x = pos - y*SCREEN_WIDTH;			
+				player[1-player_id].setX(x);
+				player[1-player_id].setY(y);
+				repaint( player[1-Math.max(0, player_id)].getX() - BLOCKS_SIZE/2 , player[1-Math.max(0, player_id)].getY() - BLOCKS_SIZE/2, BLOCKS_SIZE + 2, BLOCKS_SIZE + 2);
 				checkForTie();
 				checkForEnemyWin();
-				checkForWin();
-//			} 
-//			catch (IOException e) {
-//				e.printStackTrace();
-//				errors++;
-//			}
+			} 
+			catch (IOException e) {
+				e.printStackTrace();
+				errors++;
+			}
 		}
 	}
 	
-	
-	
 	private void checkForWin() {
-		
+		if((int)(player[player_id].getX()/BLOCKS_SIZE) == BLOCKS_WIDTH-2 && ( (int)(player[player_id].getY()/BLOCKS_SIZE) == 14 || (int)(player[player_id].getY()/BLOCKS_SIZE) == 13) ) {
+			
+			won = true;
+		}
 	}
 	
 	private void checkForEnemyWin() {
 		
+		if((int)(player[1-player_id].getX()/BLOCKS_SIZE) == BLOCKS_WIDTH-2 && ( (int)(player[1-player_id].getY()/BLOCKS_SIZE) == 14 || (int)(player[1-player_id].getY()/BLOCKS_SIZE) == 13) ) {
+			
+			enemyWon = true;
+		}
 	}
 	
 	private void checkForTie() {
-		
+		if( ((int)(player[1-player_id].getX()/BLOCKS_SIZE) == BLOCKS_WIDTH-2 && ( (int)(player[1-player_id].getY()/BLOCKS_SIZE) == 14 || (int)(player[1-player_id].getY()/BLOCKS_SIZE) == 13) ) 
+				&& ((int)(player[player_id].getX()/BLOCKS_SIZE) == BLOCKS_WIDTH-2 && ( (int)(player[player_id].getY()/BLOCKS_SIZE) == 14 || (int)(player[player_id].getY()/BLOCKS_SIZE) == 13) ) ) {
+			
+			enemyWon = true;
+		}
 	}
 	
 	private void listenForServerRequest() {
-		Socket socket = null;
+//		Socket socket = null;
 		try {
 			socket = serverSocket.accept();
 			dos = new DataOutputStream(socket.getOutputStream());
