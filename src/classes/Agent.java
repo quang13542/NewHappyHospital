@@ -1,16 +1,19 @@
 package classes;
 
+import algorithm.AStarSearch;
 import classes.*;
+import constant.*;
+import java.util.List;
 
 public class Agent extends Actor {
 	private Position startPos;
 	private Position endPos;
 	private Position[] groundPos;
 	private Position[] path;
-	private Position[] vertexs;
+	private List<Position> vertexs;
 	private Text endText;
 	private Text agentText;
-//  private Astar astar;
+    private AStarSearch astar;
 	private double next = 1;
 	private double id;
 	public boolean isOverlap = false;
@@ -18,10 +21,15 @@ public class Agent extends Actor {
 	private int x ;
 	private int y ;
 
-	public Agent(int x, int y) {
-		super("", x, y, "", "");
-		this.x = x;
-		this.y = y;
+	public Agent(Position startPos, Position endPos, Position[] groundPos, int id) {
+		super("", startPos.x, startPos.y, "", "");
+		this.x = startPos.x;
+		this.y = startPos.y;
+		this.startPos = startPos;
+		this.endPos = endPos;
+		this.groundPos = groundPos;
+		this.astar = new AStarSearch(Constant.SCREEN_WIDTH, Constant.SCREEN_WIDTH, startPos, endPos, groundPos);
+		this.path = astar.cal();
 	}
 
 	public int getX() {
@@ -134,29 +142,29 @@ public class Agent extends Actor {
 	}
 
 	public void initVertexs() {
-//    if (this.path) {
-//      this.vertexs.push(this.path[0]);
-//      for (let cur = 2; cur < this.path.length; cur++) {
-//        if (
-//          (this.path[cur].x == this.path[cur - 1].x &&
-//            this.path[cur].x == this.path[cur - 2].x) ||
-//          (this.path[cur].y == this.path[cur - 1].y &&
-//            this.path[cur].y == this.path[cur - 2].y)
-//        ) {
-//          continue;
-//        }
-//
-//        let curV = this.vertexs[this.vertexs.length - 1];
-//        let nextV = this.path[cur - 1];
-//        this.addRandomVertexs(curV, nextV);
-//        this.vertexs.push(nextV);
-//      }
-//      this.addRandomVertexs(
-//        this.vertexs[this.vertexs.length - 1],
-//        this.path[this.path.length - 1]
-//      );
-//      this.vertexs.push(this.path[this.path.length - 1]);
-//    }
+    if (this.path) {
+      this.vertexs.add(path[0]);
+      for (int cur = 2; cur < this.path.length; cur++) {
+        if (
+          (this.path[cur].x == this.path[cur - 1].x &&
+            this.path[cur].x == this.path[cur - 2].x) ||
+          (this.path[cur].y == this.path[cur - 1].y &&
+            this.path[cur].y == this.path[cur - 2].y)
+        ) {
+          continue;
+        }
+
+        Position curV = this.vertexs.get(this.vertexs.size() - 1);
+        Position nextV = this.path[cur - 1];
+        this.addRandomVertexs(curV, nextV);
+        this.vertexs.add(nextV);
+      }
+      this.addRandomVertexs(
+        this.vertexs[this.vertexs.length - 1],
+        this.path[this.path.length - 1]
+      );
+      this.vertexs.push(this.path[this.path.length - 1]);
+    }
 	}
 
 	void preUpdate() {

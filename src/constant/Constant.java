@@ -2,6 +2,11 @@ package constant;
 
 public class Constant {
     public static final int DURATION = 4;
+    public static final int BLOCKS_WIDTH = 52;
+    public static final int BLOCKS_HEIGHT = 28;
+    public static final int BLOCKS_SIZE = 25; // 32; should be odd for better performance
+    public static final int SCREEN_WIDTH = 52 * BLOCKS_SIZE;
+    public static final int SCREEN_HEIGHT = 28 * BLOCKS_SIZE;
 //thời gian AutoAgv đợi để nhận/dỡ hàng khi đến đích
 //    public static getLateness = (x: number) => 5*x; //hàm tính chi phí thiệt hại nếu đến quá sớm hoặc quá trễ
 //    public static get SAFE_DISTANCE() : number { return 46; }
