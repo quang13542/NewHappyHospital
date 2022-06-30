@@ -1,4 +1,4 @@
-package classes.stateOfAutoAGV;
+package classes.StateOfAutoAGV;
 
 public class RunningState {
 

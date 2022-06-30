@@ -1,5 +1,5 @@
 package classes;
 
-public class graph {
+public class Graph {
 
 }

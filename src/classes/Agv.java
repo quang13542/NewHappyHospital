@@ -2,7 +2,7 @@ package classes;
 
 import java.awt.event.KeyEvent;
 
-public class agv extends Actor {
+public class Agv extends Actor {
 	private int dx;
 	private int dy;
 	private int x ;
@@ -11,12 +11,13 @@ public class agv extends Actor {
 	private final int dir_x[] = {0, 1, 0, -1};
 	private final int dir_y[] = {-1, 0, 1, 0};
 	
-	public agv(int x,int y) {
-		
+	public Agv(String sence, int x, int y, String texture, String frame) {
+		super(sence, x, y, texture, frame);
+		// TODO Auto-generated constructor stub
 		this.x = x;
 		this.y = y;
 	}
-	
+
 	public boolean move(String stat, int siz, int up, int right, int down, int left) {
 		
 		String fl = "";

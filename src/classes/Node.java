@@ -1,4 +1,4 @@
-//package classes;
+package classes;
 //
 //import outter.Constant;
 //import outter.Constant.ModeOfPathPlanning;
@@ -11,7 +11,7 @@
 //}
 //
 //
-//public class Node {
+public class Node {
 //  public double x; // 0 <= x <= 52
 //  public double y; // 0 <= y <= 28
 //  private double lambda = 0.4;
@@ -129,4 +129,4 @@
 //  public void updateW() {
 //    this.w = (1 - lambda) * this.w + lambda * this.u;
 //  }
-//}
+}
