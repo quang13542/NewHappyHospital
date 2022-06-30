@@ -17,6 +17,7 @@ public class Agent extends Actor {
 	private double next = 1;
 	private double id;
 	public boolean isOverlap = false;
+	public boolean active = false;
 	public double speed = 38;
 	private int x ;
 	private int y ;
@@ -30,6 +31,14 @@ public class Agent extends Actor {
 		this.groundPos = groundPos;
 		this.astar = new AStarSearch(Constant.SCREEN_WIDTH, Constant.SCREEN_WIDTH, startPos, endPos, groundPos);
 		this.path = astar.cal();
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	public int getX() {
@@ -103,46 +112,46 @@ public class Agent extends Actor {
 	}
 
 	public void addRandomVertexs(Position start, Position end) {
-//    let dis = Math.sqrt((start.x - end.x) ** 2 + (start.y - end.y) ** 2);
-//    let num = Math.ceil((dis * 32) / 50);
-//    for (let i = 1; i < num; i++) {
-//      while (true) {
-//        let rV = new Position(
-//          ((end.x - start.x) / num) * i + start.x + (Math.random() - 0.5),
-//          ((end.y - start.y) / num) * i + start.y + (Math.random() - 0.5)
-//        );
-//        let _1, _2, _3, _4;
-//        let b_1, b_2, b_3, b_4;
-//        _1 = new Position(rV.x, rV.y);
-//        _2 = new Position(rV.x + 1, rV.y);
-//        _3 = new Position(rV.x + 1, rV.y + 1);
-//        _4 = new Position(rV.x, rV.y + 1);
-//
-//        for (let j = 0; j < this.groundPos.length; j++) {
-//          let p = this.groundPos[j];
-//          if (_1.x < p.x + 1 && _1.y < p.y + 1 && _1.x >= p.x && _1.y >= p.y) {
-//            b_1 = true;
-//          }
-//          if (_2.x < p.x + 1 && _2.y < p.y + 1 && _2.x >= p.x && _2.y >= p.y) {
-//            b_2 = true;
-//          }
-//          if (_3.x < p.x + 1 && _3.y < p.y + 1 && _3.x >= p.x && _3.y >= p.y) {
-//            b_3 = true;
-//          }
-//          if (_4.x < p.x + 1 && _4.y < p.y + 1 && _4.x >= p.x && _4.y >= p.y) {
-//            b_4 = true;
-//          }
-//        }
-//        if (b_1 && b_2 && b_3 && b_4) {
-//          this.vertexs.push(rV);
-//          break;
-//        }
-//      }
-//    }
+    double dis = Math.sqrt(Math.pow((start.x - end.x), 2) + Math.pow((start.y - end.y),2));
+    double num = Math.ceil((dis * 32) / 50);
+    for (int i = 1; i < num; i++) {
+      while (true) {
+        Position rV = new Position(
+          (int)(((end.x - start.x) / num) * i + start.x + (Math.random() - 0.5)),
+          (int)(((end.y - start.y) / num) * i + start.y + (Math.random() - 0.5))
+        );
+        Position _1, _2, _3, _4;
+        Boolean b_1, b_2, b_3, b_4;
+        _1 = new Position(rV.x, rV.y);
+        _2 = new Position(rV.x + 1, rV.y);
+        _3 = new Position(rV.x + 1, rV.y + 1);
+        _4 = new Position(rV.x, rV.y + 1);
+
+        for (int j = 0; j < this.groundPos.length; j++) {
+          Position p = this.groundPos[j];
+          if (_1.x < p.x + 1 && _1.y < p.y + 1 && _1.x >= p.x && _1.y >= p.y) {
+            b_1 = true;
+          }
+          if (_2.x < p.x + 1 && _2.y < p.y + 1 && _2.x >= p.x && _2.y >= p.y) {
+            b_2 = true;
+          }
+          if (_3.x < p.x + 1 && _3.y < p.y + 1 && _3.x >= p.x && _3.y >= p.y) {
+            b_3 = true;
+          }
+          if (_4.x < p.x + 1 && _4.y < p.y + 1 && _4.x >= p.x && _4.y >= p.y) {
+            b_4 = true;
+          }
+        }
+        if (b_1 && b_2 && b_3 && b_4) {
+          this.vertexs.a(rV);
+          break;
+        }
+      }
+    }
 	}
 
 	public void initVertexs() {
-    if (this.path) {
+    if (this.path != null) {
       this.vertexs.add(path[0]);
       for (int cur = 2; cur < this.path.length; cur++) {
         if (
@@ -160,10 +169,10 @@ public class Agent extends Actor {
         this.vertexs.add(nextV);
       }
       this.addRandomVertexs(
-        this.vertexs[this.vertexs.length - 1],
+        this.vertexs.get(this.vertexs.size() - 1),
         this.path[this.path.length - 1]
       );
-      this.vertexs.push(this.path[this.path.length - 1]);
+      this.vertexs.add(this.path[this.path.length - 1]);
     }
 	}
 
