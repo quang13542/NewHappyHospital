@@ -11,7 +11,7 @@ public class Constant {
 //    public static getLateness = (x: number) => 5*x; //hàm tính chi phí thiệt hại nếu đến quá sớm hoặc quá trễ
 //    public static get SAFE_DISTANCE() : number { return 46; }
 //    public static get DELTA_T() : number { return 10; }
-//    public static get MODE() : ModeOfPathPlanning { return ModeOfPathPlanning.FRANSEN; }
+    public static ModeOfPathPlanning MODE() { return ModeOfPathPlanning.FRANSEN; }
     
     public static String secondsToHMS(Double seconds) {
         var h = Math.floor(seconds % (3600*24) / 3600);

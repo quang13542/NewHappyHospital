@@ -143,8 +143,8 @@ public class GamePanel extends JPanel implements ActionListener, Runnable {
 		addKeyListener(new TAdapter());
 		d = new Dimension(0, 0);
 
-		player[0] = new Agv("", start_point_x[0] * BLOCKS_SIZE + BLOCKS_SIZE / 2, start_point_y[0] * BLOCKS_SIZE + BLOCKS_SIZE / 2, "", "");
-		player[1] = new Agv("", start_point_x[1] * BLOCKS_SIZE + BLOCKS_SIZE / 2, start_point_y[1] * BLOCKS_SIZE + BLOCKS_SIZE / 2, "", "");
+		player[0] = new Agv(start_point_x[0] * BLOCKS_SIZE + BLOCKS_SIZE / 2, start_point_y[0] * BLOCKS_SIZE + BLOCKS_SIZE / 2, "", "");
+		player[1] = new Agv(start_point_x[1] * BLOCKS_SIZE + BLOCKS_SIZE / 2, start_point_y[1] * BLOCKS_SIZE + BLOCKS_SIZE / 2, "", "");
 		agents = new Agent[10];
 		agents[0] = new Agent(4, 3);
 		

@@ -1,5 +1,7 @@
 package classes;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Set;
 
 import classes.*;
@@ -87,20 +89,19 @@ public class Graph {
         cur[i][j] = 0;
       }
     }
-    
-    for (int i = 0; i < this.agents.length; i++) {
-      Agent agent = this.agents[i];
-      if (agent.active) {
-        int xl = (int)Math.floor(agent.getX() / 32);
-        int xr = (int)Math.floor((agent.getX() + 31) / 32);
-        int yt = (int)Math.floor(agent.getY() / 32);
-        int yb = (int)Math.floor((agent.getY() + 31) / 32);
-        cur[xl][yt] = 1;
-        cur[xl][yb] = 1;
-        cur[xr][yt] = 1;
-        cur[xr][yb] = 1;
-      }
-    }
+
+        for (Agent agent : this.agents) {
+            if (agent.active) {
+                int xl = (int) Math.floor(agent.getX() / 32);
+                int xr = (int) Math.floor((agent.getX() + 31) / 32);
+                int yt = (int) Math.floor(agent.getY() / 32);
+                int yb = (int) Math.floor((agent.getY() + 31) / 32);
+                cur[xl][yt] = 1;
+                cur[xl][yb] = 1;
+                cur[xr][yt] = 1;
+                cur[xr][yb] = 1;
+            }
+        }
     
     for (int i = 0; i < 52; i++) {
       for (int j = 0; j < 28; j++) {
@@ -126,13 +127,13 @@ public class Graph {
     this.busy[i][j] = 0;
   }
 
-	public Node calPathAStar(Node start, Node end) {
+	public ArrayList<Node> calPathAStar(Node start, Node end) {
     /**
        * Khoi tao cac bien trong A*
     */
-	Set<Node> openSet;
-	Set<Node> closeSet;
-	Node[] path;
+	ArrayList<Node> openSet = new ArrayList<>();
+	ArrayList<Node> closeSet = new ArrayList<>();;
+	ArrayList<Node> path = new ArrayList<>();;
 	int[][] astar_f = new int[this.width][];
 	int[][] astar_g = new int[this.width][];
 	int[][] astar_h = new int[this.width][];
@@ -160,80 +161,76 @@ public class Graph {
       int winner = 0;
       for (int i = 0; i < openSet.size(); i++) {
         if (
-          astar_f[(int)(openSet.toArray()[i])][(int)(openSet.toArray()[i].y] < astar_f[openSet[winner].x][openSet[winner].y]
+          astar_f[(int)(openSet.get(i).x)][(int)(openSet.get(i).y)] < astar_f[(int) openSet.get(winner).x][(int) openSet.get(winner).y]
         ) {
           winner = i;
         }
       }
-      let current = openSet[winner];
-      if (openSet[winner].equal(end)) {
-        let cur: Node2D = this.nodes[end.x][end.y];
-        path.push(cur);
-        while (previous[cur.x][cur.y] != undefined) {
-          path.push(previous[cur.x][cur.y]);
-          cur = previous[cur.x][cur.y];
+      Node current = (Node) openSet.toArray()[winner];
+      if (openSet.get(winner).equal(end)) {
+    	Node cur = this.nodes[(int) end.x][(int) end.y];
+        path.add(cur);
+        while (previous[(int) cur.x][(int) cur.y] != null) {
+          path.add(previous[(int) cur.x][(int) cur.y]);
+          cur = previous[(int) cur.x][(int) cur.y];
         }
-        path.reverse();
-        //console.assert(lengthOfPath == path.length, "path has length: " + path.length + " instead of " + lengthOfPath);
+          Collections.reverse(path);
         return path;
       }
-      openSet.splice(winner, 1);
-      closeSet.push(current);
-      let neighbors = [current.nodeN, current.nodeE, current.nodeS, current.nodeW,
-                       current.nodeVN, current.nodeVE, current.nodeVS, current.nodeVW ];
-      
-      for (let i = 0; i < neighbors.length; i++) {
-        let neighbor = neighbors[i];
+      openSet.remove(winner);
+      closeSet.add(current);
+      Node[] neighbors = {current.nodeN, current.nodeE, current.nodeS, current.nodeW, current.nodeVN, current.nodeVE, current.nodeVS, current.nodeVW};
+
+      for (int i = 0; i < neighbors.length; i++) {
+        Node neighbor = neighbors[i];
         if (neighbor != null) {
-          let timexoay = 0;
+          int timexoay = 0;
           if (
-            previous[current.x][current.y] &&
-            neighbor.x != previous[current.x][current.y].x &&
-            neighbor.y != previous[current.x][current.y].y
+            previous[(int) current.x][(int) current.y] != null &&
+            neighbor.x != previous[(int) current.x][(int) current.y].x &&
+            neighbor.y != previous[(int) current.x][(int) current.y].y
           ) {
             timexoay = 1;
           }
-          let tempG =
-          astar_g[current.x][current.y] + 1 + current.getW() + timexoay;
+          double tempG = astar_g[(int) current.x][(int) current.y] + 1 + current.getW() + timexoay;
 
           if (!this.isInclude(neighbor, closeSet)) {
             if (this.isInclude(neighbor, openSet)) {
-              if (tempG < astar_g[neighbor.x][neighbor.y]) {
-                astar_g[neighbor.x][neighbor.y] = tempG;
+              if (tempG < astar_g[(int) neighbor.x][(int) neighbor.y]) {
+                astar_g[(int) neighbor.x][(int) neighbor.y] = (int) tempG;
               }
             } else {
-              astar_g[neighbor.x][neighbor.y] = tempG;
-              openSet.push(neighbor);
+              astar_g[(int) neighbor.x][(int) neighbor.y] = (int) tempG;
+              openSet.add(neighbor);
               lengthOfPath++;
             }
-            astar_h[neighbor.x][neighbor.y] = this.heuristic(neighbor, end);
-            astar_f[neighbor.x][neighbor.y] =
-              astar_h[neighbor.x][neighbor.y] + astar_g[neighbor.x][neighbor.y];
-            previous[neighbor.x][neighbor.y] = current;
+            astar_h[(int) neighbor.x][(int) neighbor.y] = (int) this.heuristic(neighbor, end);
+            astar_f[(int) neighbor.x][(int) neighbor.y] =
+              astar_h[(int) neighbor.x][(int) neighbor.y] + astar_g[(int) neighbor.x][(int) neighbor.y];
+            previous[(int) neighbor.x][(int) neighbor.y] = current;
           } else {
-            if (tempG < astar_g[neighbor.x][neighbor.y]) {
-              openSet.push(neighbor);
-              const index = closeSet.indexOf(neighbor);
+            if (tempG < astar_g[(int) neighbor.x][neighbor.y]) {
+              openSet.add(neighbor);
+              int index = closeSet.indexOf(neighbor);
               if (index > -1) {
-                closeSet.splice(index, 1);
+                closeSet.remove(index);
               }
             }
           }
         }
       }
     }//end of while (openSet.length > 0)
-    console.log("Path not found!");
     return null;
   }
 
-	public isInclude(node: Node2D, nodes: Node2D[]): boolean {
-    for (let i = 0; i < nodes.length; i++) {
-      if (node.equal(nodes[i])) return true;
-    }
+	public boolean isInclude(Node node, ArrayList<Node> nodes) {
+        for (Node value : nodes) {
+            if (node.equal(value)) return true;
+        }
     return false;
   }
 
-	public heuristic(node1: Node2D, node2: Node2D): number {
+	public double heuristic(Node node1, Node node2) {
     return Math.abs(node1.x - node2.x) + Math.abs(node1.y - node2.y);
   }
 }

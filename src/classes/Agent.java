@@ -23,7 +23,7 @@ public class Agent extends Actor {
 	private int y ;
 
 	public Agent(Position startPos, Position endPos, Position[] groundPos, int id) {
-		super("", startPos.x, startPos.y, "", "");
+		super(startPos.x, startPos.y, "", "");
 		this.x = startPos.x;
 		this.y = startPos.y;
 		this.startPos = startPos;
@@ -121,29 +121,28 @@ public class Agent extends Actor {
           (int)(((end.y - start.y) / num) * i + start.y + (Math.random() - 0.5))
         );
         Position _1, _2, _3, _4;
-        Boolean b_1, b_2, b_3, b_4;
+        boolean b_1 = false, b_2 = false, b_3 = false, b_4 = false;
         _1 = new Position(rV.x, rV.y);
         _2 = new Position(rV.x + 1, rV.y);
         _3 = new Position(rV.x + 1, rV.y + 1);
         _4 = new Position(rV.x, rV.y + 1);
 
-        for (int j = 0; j < this.groundPos.length; j++) {
-          Position p = this.groundPos[j];
-          if (_1.x < p.x + 1 && _1.y < p.y + 1 && _1.x >= p.x && _1.y >= p.y) {
-            b_1 = true;
-          }
-          if (_2.x < p.x + 1 && _2.y < p.y + 1 && _2.x >= p.x && _2.y >= p.y) {
-            b_2 = true;
-          }
-          if (_3.x < p.x + 1 && _3.y < p.y + 1 && _3.x >= p.x && _3.y >= p.y) {
-            b_3 = true;
-          }
-          if (_4.x < p.x + 1 && _4.y < p.y + 1 && _4.x >= p.x && _4.y >= p.y) {
-            b_4 = true;
-          }
-        }
+		  for (Position p : this.groundPos) {
+			  if (_1.x < p.x + 1 && _1.y < p.y + 1 && _1.x >= p.x && _1.y >= p.y) {
+				  b_1 = true;
+			  }
+			  if (_2.x < p.x + 1 && _2.y < p.y + 1 && _2.x >= p.x && _2.y >= p.y) {
+				  b_2 = true;
+			  }
+			  if (_3.x < p.x + 1 && _3.y < p.y + 1 && _3.x >= p.x && _3.y >= p.y) {
+				  b_3 = true;
+			  }
+			  if (_4.x < p.x + 1 && _4.y < p.y + 1 && _4.x >= p.x && _4.y >= p.y) {
+				  b_4 = true;
+			  }
+		  }
         if (b_1 && b_2 && b_3 && b_4) {
-          this.vertexs.a(rV);
+          this.vertexs.add(rV);
           break;
         }
       }

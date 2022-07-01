@@ -26,8 +26,8 @@ public class AutoAgv extends Actor {
   public double startX;
   public double startY;
 
-  AutoAgv(String sence, int x, int y, String texture, String frame)  {
-    super(scene, x * 32, y * 32, "agv");
+  AutoAgv(int x, int y, String texture, String frame)  {
+    super(x * 32, y * 32, "agv", "");
     this.startX = x * 32;
     this.startY = y * 32;
     this.endX = endX * 32;

@@ -11,8 +11,8 @@ public class Agv extends Actor {
 	private final int dir_x[] = {0, 1, 0, -1};
 	private final int dir_y[] = {-1, 0, 1, 0};
 	
-	public Agv(String sence, int x, int y, String texture, String frame) {
-		super(sence, x, y, texture, frame);
+	public Agv(int x, int y, String texture, String frame) {
+		super(x, y, texture, frame);
 		// TODO Auto-generated constructor stub
 		this.x = x;
 		this.y = y;

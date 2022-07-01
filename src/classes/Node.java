@@ -9,8 +9,8 @@ enum StateOfNode {
 
 
 public class Node {
-  public double x; // 0 <= x <= 52
-  public double y; // 0 <= y <= 28
+  public int x; // 0 <= x <= 52
+  public int y; // 0 <= y <= 28
   private double lambda = 0.4;
   public Node nodeW;
   public Node nodeN;
@@ -40,7 +40,7 @@ public class Node {
   public boolean isVirtualNode = false;
   private double _weight = 0;
   
-  public Node(double x, double y, boolean isVirtualNode, StateOfNode state, double p_random, double t_min, double t_max) {
+  public Node(int x, int y, boolean isVirtualNode, StateOfNode state, double p_random, double t_min, double t_max) {
     this.x = x;
     this.y = y;
     this.state = StateOfNode.NOT_ALLOW;
@@ -51,7 +51,7 @@ public class Node {
   }
 
   public double getW() {
-    if(Constant.getMODE() == ModeOfPathPlanning.FRANSEN)
+    if(Constant.MODE() == ModeOfPathPlanning.FRANSEN)
       return this.w;
     else
 //      return this.weight;  ?? wtf
