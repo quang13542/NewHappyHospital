@@ -34,7 +34,8 @@ import classes.AutoAgv;
 import HappyHospital.*;
 import classes.Position;
 import constant.Constant;
-import ultils.*;
+import HappyHospital.utils;
+
 public class GamePanel extends JPanel implements ActionListener, Runnable {
 
 	private static final long serialVersionUID = 1L;
@@ -47,7 +48,7 @@ public class GamePanel extends JPanel implements ActionListener, Runnable {
 	static final int dir_x[] = { 0, 1, 0, -1 };
 	static final int dir_y[] = { -1, 0, 1, 0 };
 	static final int Delay = 10;
-
+	public int numberAgent = 10;
 	private int player_id = -1;
 // direction id
 //		0
@@ -75,7 +76,7 @@ public class GamePanel extends JPanel implements ActionListener, Runnable {
 	private int start_point_x[] = { 1, 1 };
 	private int start_point_y[] = { 14, 13 };
 	private Agv player[];
-	private Agent agents[];
+	private Agent[] agents = new Agent[this.numberAgent];
 
 	private Image wallpng, dooruppng, doordownpng, doorrightpng, doorleftpng, bedpng, gatepng, elevatorpng, roompng, groundpng, agvpng, agentpng;
 	private String ip = "localhost";
@@ -133,6 +134,16 @@ public class GamePanel extends JPanel implements ActionListener, Runnable {
 //	    }
 //	  }
 	  
+	public void createRandomAgents() {
+		for(int i=0; i < this.numberAgent; i++) {
+			int startPosIndex = utils.getRandomNumber(0, this.groundPos.size());
+			int endPosIndex = utils.getRandomNumber(0, this.groundPos.size());
+			Position startPos = this.groundPos.get(startPosIndex);
+			Position endPos = this.groundPos.get(endPosIndex);
+			this.agents[i] = new Agent(startPos, endPos, this.groundPos, i);
+		}
+		
+	}
 	private void initVariables() {
 
 //		System.out.println("Please input the IP: ");
@@ -147,13 +158,12 @@ public class GamePanel extends JPanel implements ActionListener, Runnable {
 		player = new Agv[2];
 		addKeyListener(new TAdapter());
 		d = new Dimension(0, 0);
-
+		// init AGV
 		player[0] = new Agv(start_point_x[0] * BLOCKS_SIZE + BLOCKS_SIZE / 2, start_point_y[0] * BLOCKS_SIZE + BLOCKS_SIZE / 2, "", "");
 		player[1] = new Agv(start_point_x[1] * BLOCKS_SIZE + BLOCKS_SIZE / 2, start_point_y[1] * BLOCKS_SIZE + BLOCKS_SIZE / 2, "", "");
-		agents = new Agent[10];
-		Position startPos = new Position(4, 3);
-		Position endPos = new Position(20, 20);
-		agents[0] = new Agent(startPos, endPos, this.groundPos, 1);
+		
+		// init agents
+		this.createRandomAgents();
 		
 		timer = new Timer(Delay, this);
 		timer.start();
@@ -182,8 +192,10 @@ public class GamePanel extends JPanel implements ActionListener, Runnable {
 	}
 	
 	private void drawAgent(Graphics2D g2d) {
-		g2d.drawImage(agentpng, agents[0].getX() + 10*25, agents[0].getY() + 10*25, this);
-		g2d.drawString("DES_1", BLOCKS_SIZE * 17, BLOCKS_SIZE * 20);
+		for(Agent agent: this.agents) {
+			g2d.drawImage(agentpng, agent.getX()*BLOCKS_SIZE, agent.getY()*BLOCKS_SIZE, this);
+			g2d.drawString("DES_" + agent.getId(), BLOCKS_SIZE * 20, BLOCKS_SIZE * 20);
+		}
 	}
 
 	private void drawHospital(Graphics2D g2d) {

@@ -105,7 +105,6 @@ public class Agv extends Actor {
 		return false;
 	}
 	public int getX() {
-        
         return x;
     }
 

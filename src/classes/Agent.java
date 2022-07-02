@@ -12,12 +12,12 @@ public class Agent extends Actor {
 	private Position endPos;
 	private ArrayList<Position> groundPos;
 	private Position[] path;
-	private List<Position> vertexs;
+	private ArrayList<Position> vertexs = new ArrayList<>();
 	private Text endText;
 	private Text agentText;
     private AStarSearch astar;
-	private double next = 1;
-	private double id;
+	private int next = 1;
+	private int id;
 	public boolean isOverlap = false;
 	public boolean active = false;
 	public double speed = 38;
@@ -33,6 +33,7 @@ public class Agent extends Actor {
 		this.groundPos = groundPos;
 		this.astar = new AStarSearch(Constant.BLOCKS_WIDTH, Constant.BLOCKS_HEIGHT, startPos, endPos, groundPos);
 		this.path = astar.cal();
+		this.initVertexs();
 	}
 
 	public boolean isActive() {
@@ -44,12 +45,12 @@ public class Agent extends Actor {
 	}
 
 	public int getX() {
-
+		this.preUpdate();
 		return x;
 	}
 
 	public int getY() {
-
+		this.preUpdate();
 		return y;
 	}
 
@@ -86,20 +87,22 @@ public class Agent extends Actor {
 	// }
 
 	public void goToDestinationByVertexs() {
-//    if (this.next == this.vertexs.length) {
+    if (this.next == this.vertexs.size()) {
 //      this.agentText.setText("DONE");
 //      this.agentText.setFontSize(12);
 //      this.agentText.setX(this.x - 1);
 //      this.x = this.vertexs[this.vertexs.length - 1].x * 32;
 //      this.y = this.vertexs[this.vertexs.length - 1].y * 32;
 //      this.setVelocity(0, 0);
-//      this.eliminate();
-//      return;
-//    }
-//    if (
-//      Math.abs(this.vertexs[this.next].x * 32 - this.x) > 1 ||
-//      Math.abs(this.vertexs[this.next].y * 32 - this.y) > 1
-//    ) {
+      this.eliminate();
+      return;
+    }
+    if (
+      Math.abs(this.vertexs.get(this.next).x * 32 - this.x) > 1 ||
+      Math.abs(this.vertexs.get(this.next).y * 32 - this.y) > 1
+    ) {
+    	this.y = this.vertexs.get(this.next).y;
+    	this.x = this.vertexs.get(this.next).x;
 //      this.scene.physics.moveTo(
 //        this,
 //        this.vertexs[this.next].x * 32,
@@ -108,9 +111,8 @@ public class Agent extends Actor {
 //      );
 //      this.agentText.setX(this.x);
 //      this.agentText.setY(this.y - 16);
-//    } else {
-//      this.next++;
-//    }
+    	this.next++;
+    }
 	}
 
 	public void addRandomVertexs(Position start, Position end) {
@@ -194,10 +196,8 @@ public class Agent extends Actor {
 	}
 
 	public void eliminate() {
-//    this.scene.events.emit("destroyAgent", this);
-//    this.endText.destroy();
-//    this.agentText.destroy();
-//    this.destroy();
+		this.x = -1;
+		this.y = -1;
 	}
 
 	public void pause() {
