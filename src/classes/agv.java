@@ -5,19 +5,21 @@ import java.awt.event.KeyEvent;
 public class agv extends Actor {
 	private int dx;
 	private int dy;
-	private int x ;
-	private int y ;
+	protected int x ;
+	protected int y ;
+	protected int BLOCKS_SIZE;
 	private String cur_dir = "1";
-	private final int dir_x[] = {0, 1, 0, -1};
-	private final int dir_y[] = {-1, 0, 1, 0};
+	protected final int dir_x[] = {0, 1, 0, -1};
+	protected final int dir_y[] = {-1, 0, 1, 0};
 	
-	public agv(int x,int y) {
+	public agv(int x, int y, int BLOCKS_SIZE) {
 		
 		this.x = x;
 		this.y = y;
+		this.BLOCKS_SIZE = BLOCKS_SIZE;
 	}
 	
-	public boolean move(String stat, int siz, int up, int right, int down, int left) {
+	public boolean move(String stat, int BLOCKS_SIZE, int up, int right, int down, int left) {
 		
 		String fl = "";
 		String tocen = "";
@@ -33,22 +35,22 @@ public class agv extends Actor {
 			else if(ch == '3') dir_left = true;
 		}
 		
-		if(y % siz == siz/2 && x % siz >= siz/2) {
+		if(y % BLOCKS_SIZE == BLOCKS_SIZE/2 && x % BLOCKS_SIZE >= BLOCKS_SIZE/2) {
 			if(dx == 1 && left != 0) fl += '1';
-			if(dx == -1 && dir_right && x % siz != siz/2) tocen += '3';
+			if(dx == -1 && dir_right && x % BLOCKS_SIZE != BLOCKS_SIZE/2) tocen += '3';
 		}
-		if(y % siz == siz/2 && x % siz <= siz/2) {
+		if(y % BLOCKS_SIZE == BLOCKS_SIZE/2 && x % BLOCKS_SIZE <= BLOCKS_SIZE/2) {
 			if(dx == -1 && right !=0) fl += '3';
-			if(dx == 1 && dir_left && x % siz != siz/2) tocen += '1';
+			if(dx == 1 && dir_left && x % BLOCKS_SIZE != BLOCKS_SIZE/2) tocen += '1';
 			
 		}
-		if(x % siz == siz/2 && y % siz <= siz/2) {
+		if(x % BLOCKS_SIZE == BLOCKS_SIZE/2 && y % BLOCKS_SIZE <= BLOCKS_SIZE/2) {
 			if(dy == -1 && down != 0) fl += '0';
-			if(dy == 1 && dir_up && y % siz != siz/2) tocen += '2';
+			if(dy == 1 && dir_up && y % BLOCKS_SIZE != BLOCKS_SIZE/2) tocen += '2';
 		}
-		if(x % siz == siz/2 && y % siz >= siz/2) {
+		if(x % BLOCKS_SIZE == BLOCKS_SIZE/2 && y % BLOCKS_SIZE >= BLOCKS_SIZE/2) {
 			if(dy == 1 && up != 0) fl += '2';
-			if(dy == -1 && dir_down && y % siz != siz/2) tocen += '0';
+			if(dy == -1 && dir_down && y % BLOCKS_SIZE != BLOCKS_SIZE/2) tocen += '0';
 		}
 		if(fl == "" && tocen == "") return false;
 		for(char fle: fl.toCharArray()) {
