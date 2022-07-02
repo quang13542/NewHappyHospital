@@ -1,5 +1,7 @@
 package algorithm;
 
+import java.util.ArrayList;
+
 import classes.Position;
 import structure.DynamicSpotArray;
 
@@ -10,7 +12,7 @@ public class AStarSearch {
 	public Spot[][] grid;
 	public DynamicSpotArray path;
 	
-	public AStarSearch(int width, int height, Position startPos, Position endPos, Position[] ablePos){
+	public AStarSearch(int width, int height, Position startPos, Position endPos, ArrayList<Position> ablePos){
 		this.width = width;
 	    this.height = height;
 	    this.start = new Spot(startPos.x, startPos.y);
@@ -23,9 +25,9 @@ public class AStarSearch {
 			}
 	    }
 	    
-	    this.ableSpot = new Spot[ablePos.length];
-	    for (int i = 0; i < ablePos.length; i++) {
-	    	this.ableSpot[i] = this.grid[ablePos[i].x][ablePos[i].y];
+	    this.ableSpot = new Spot[ablePos.size()];
+	    for (int i = 0; i < ablePos.size(); i++) {
+	    	this.ableSpot[i] = this.grid[ablePos.get(i).x][ablePos.get(i).y];
 	    }
 	    
 	    for (int i = 0; i < width; i++) {

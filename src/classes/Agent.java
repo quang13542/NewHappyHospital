@@ -3,12 +3,14 @@ package classes;
 import algorithm.AStarSearch;
 import classes.*;
 import constant.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class Agent extends Actor {
 	private Position startPos;
 	private Position endPos;
-	private Position[] groundPos;
+	private ArrayList<Position> groundPos;
 	private Position[] path;
 	private List<Position> vertexs;
 	private Text endText;
@@ -22,14 +24,14 @@ public class Agent extends Actor {
 	private int x ;
 	private int y ;
 
-	public Agent(Position startPos, Position endPos, Position[] groundPos, int id) {
+	public Agent(Position startPos, Position endPos, ArrayList<Position> groundPos, int id) {
 		super(startPos.x, startPos.y, "", "");
 		this.x = startPos.x;
 		this.y = startPos.y;
 		this.startPos = startPos;
 		this.endPos = endPos;
 		this.groundPos = groundPos;
-		this.astar = new AStarSearch(Constant.SCREEN_WIDTH, Constant.SCREEN_WIDTH, startPos, endPos, groundPos);
+		this.astar = new AStarSearch(Constant.BLOCKS_WIDTH, Constant.BLOCKS_HEIGHT, startPos, endPos, groundPos);
 		this.path = astar.cal();
 	}
 

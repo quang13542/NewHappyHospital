@@ -3,5 +3,10 @@ src/module-info.java
 .metadata/
 .idea
 HappyHospital.iml
-
+bin/HappyHospital/GamePanel$TAdapter.class
+bin/HappyHospital/GamePanel.class
+bin/algorithm/AStarSearch.class
+bin/classes/Actor.class
+bin/classes/AutoAgv.class
+bin/classes/Position.class
 

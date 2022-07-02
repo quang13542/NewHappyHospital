@@ -33,7 +33,8 @@ import classes.Agv;
 import classes.AutoAgv;
 import HappyHospital.*;
 import classes.Position;
-
+import constant.Constant;
+import ultils.*;
 public class GamePanel extends JPanel implements ActionListener, Runnable {
 
 	private static final long serialVersionUID = 1L;
@@ -56,7 +57,7 @@ public class GamePanel extends JPanel implements ActionListener, Runnable {
 //		2
 	static short nopath[] = views.nopath;
 	static short ground[] = views.ground;
-	private Position[] groundPos = {};
+	private ArrayList<Position> groundPos = new ArrayList<>();
 	static short path[] = views.path;
 	static short room[] = views.room;
 	static short elevator[] = views.elevator;
@@ -106,6 +107,7 @@ public class GamePanel extends JPanel implements ActionListener, Runnable {
 	private int errors = 0;
 
 	GamePanel() {
+		this.getGroundPos();
 		loadImages();
 		initVariables();
 		initBoard();
@@ -151,7 +153,7 @@ public class GamePanel extends JPanel implements ActionListener, Runnable {
 		agents = new Agent[10];
 		Position startPos = new Position(4, 3);
 		Position endPos = new Position(20, 20);
-		agents[0] = new Agent(startPos, endPos, groundPos, 1);
+		agents[0] = new Agent(startPos, endPos, this.groundPos, 1);
 		
 		timer = new Timer(Delay, this);
 		timer.start();
@@ -496,6 +498,20 @@ public class GamePanel extends JPanel implements ActionListener, Runnable {
 		}
 //		yourTurn = true;
 //		circle = false;
+	}
+	
+	public ArrayList<Position> getGroundPos() {
+		if(this.groundPos == null) {
+			for(int i = 0; i < this.ground.length; i++) {
+				if(this.ground[i] == 1) {
+					int x = i%Constant.BLOCKS_WIDTH;
+					int y = (int)(i/Constant.BLOCKS_WIDTH);
+					Position thisPos = new Position(x, y);
+					this.groundPos.add(thisPos);
+				}
+			}
+		}
+		return this.groundPos;
 	}
 
 }
