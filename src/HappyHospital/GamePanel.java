@@ -361,6 +361,39 @@ public class GamePanel extends JPanel implements ActionListener, Runnable{
 	        drawagv(g2d);
 	        drawAutoAgv(g2d);
 	
+<<<<<<< HEAD
+=======
+	//        if (inGame) {
+	//            playGame(g2d);
+	//        } else {
+	//            showIntroScreen(g2d);
+	//        }
+	
+	        
+	        if (won || enemyWon) {
+//				Graphics2D g2 = (Graphics2D) g;
+
+				g.setColor(Color.RED);
+				g.setFont(largerFont);
+				Graphics2D g2 = (Graphics2D) g;
+				g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+				if (won) {
+					g.drawString(wonString, 2*BLOCKS_WIDTH , 2*BLOCKS_HEIGHT );
+					repaint();
+				} else if (enemyWon) {
+					g.drawString(enemyWonString, 2*BLOCKS_WIDTH , 2*BLOCKS_HEIGHT );
+					repaint();
+				}
+			}
+			if (tie) {
+				g.setColor(Color.BLACK);
+				g.setFont(largerFont);
+				Graphics2D g2 = (Graphics2D) g;
+				g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+				g.drawString(tieString, 2*BLOCKS_WIDTH , 2*BLOCKS_HEIGHT );
+				repaint();
+			}
+>>>>>>> be7535561dd5536ee30888308f54d85c26630c64
 			g2d.drawImage(ii, 5, 5, this);
 	        Toolkit.getDefaultToolkit().sync();
 	        g2d.dispose();
@@ -404,7 +437,11 @@ public class GamePanel extends JPanel implements ActionListener, Runnable{
 					path[(player[Math.max(0, player_id)].getX() +dir_x[0]*BLOCKS_SIZE)/BLOCKS_SIZE + ((int)((player[Math.max(0, player_id)].getY() +dir_y[0]*BLOCKS_SIZE)/BLOCKS_SIZE))*BLOCKS_WIDTH],
 					path[(player[Math.max(0, player_id)].getX() +dir_x[1]*BLOCKS_SIZE)/BLOCKS_SIZE + ((int)((player[Math.max(0, player_id)].getY() +dir_y[1]*BLOCKS_SIZE)/BLOCKS_SIZE))*BLOCKS_WIDTH]); 
 		}
+<<<<<<< HEAD
 		if(game_mode == "PvP" && ( player[Math.max(0, player_id)].getX() != cur_x || player[Math.max(0, player_id)].getY() != cur_y) ) 
+=======
+		if(player[Math.max(0, player_id)].getX() != cur_x || player[Math.max(0, player_id)].getY() != cur_y) 
+>>>>>>> be7535561dd5536ee30888308f54d85c26630c64
 		{
 			try {
 				dos.writeInt(player[Math.max(0, player_id)].getX() + player[Math.max(0, player_id)].getY()*SCREEN_WIDTH);
@@ -414,6 +451,7 @@ public class GamePanel extends JPanel implements ActionListener, Runnable{
 				e1.printStackTrace();
 			}
 		}
+<<<<<<< HEAD
 		for(int i=0; i<number_autoagv; i++) {
 //			System.out.println(bot[i].getX());
 //			System.out.println(bot[i].getY());
@@ -461,6 +499,10 @@ public class GamePanel extends JPanel implements ActionListener, Runnable{
 			
 		}
 		repaint();
+=======
+		repaint( player[Math.max(0, player_id)].getX() - BLOCKS_SIZE/2 , player[Math.max(0, player_id)].getY() - BLOCKS_SIZE/2, BLOCKS_SIZE + 2, BLOCKS_SIZE + 2);
+		if(accepted) checkForWin();
+>>>>>>> be7535561dd5536ee30888308f54d85c26630c64
 	}
 	
 	
@@ -507,9 +549,15 @@ public class GamePanel extends JPanel implements ActionListener, Runnable{
 				int x = pos - y*SCREEN_WIDTH;			
 				player[1-player_id].setX(x);
 				player[1-player_id].setY(y);
+<<<<<<< HEAD
 				repaint();
 //				checkForTie();
 //				checkForEnemyWin();
+=======
+				repaint( player[1-Math.max(0, player_id)].getX() - BLOCKS_SIZE/2 , player[1-Math.max(0, player_id)].getY() - BLOCKS_SIZE/2, BLOCKS_SIZE + 2, BLOCKS_SIZE + 2);
+				checkForTie();
+				checkForEnemyWin();
+>>>>>>> be7535561dd5536ee30888308f54d85c26630c64
 			} 
 			catch (IOException e) {
 				e.printStackTrace();
@@ -518,6 +566,32 @@ public class GamePanel extends JPanel implements ActionListener, Runnable{
 		}
 	}
 	
+<<<<<<< HEAD
+=======
+	private void checkForWin() {
+		if((int)(player[player_id].getX()/BLOCKS_SIZE) == BLOCKS_WIDTH-2 && ( (int)(player[player_id].getY()/BLOCKS_SIZE) == 14 || (int)(player[player_id].getY()/BLOCKS_SIZE) == 13) ) {
+			
+			won = true;
+		}
+	}
+	
+	private void checkForEnemyWin() {
+		
+		if((int)(player[1-player_id].getX()/BLOCKS_SIZE) == BLOCKS_WIDTH-2 && ( (int)(player[1-player_id].getY()/BLOCKS_SIZE) == 14 || (int)(player[1-player_id].getY()/BLOCKS_SIZE) == 13) ) {
+			
+			enemyWon = true;
+		}
+	}
+	
+	private void checkForTie() {
+		if( ((int)(player[1-player_id].getX()/BLOCKS_SIZE) == BLOCKS_WIDTH-2 && ( (int)(player[1-player_id].getY()/BLOCKS_SIZE) == 14 || (int)(player[1-player_id].getY()/BLOCKS_SIZE) == 13) ) 
+				&& ((int)(player[player_id].getX()/BLOCKS_SIZE) == BLOCKS_WIDTH-2 && ( (int)(player[player_id].getY()/BLOCKS_SIZE) == 14 || (int)(player[player_id].getY()/BLOCKS_SIZE) == 13) ) ) {
+			
+			enemyWon = true;
+		}
+	}
+	
+>>>>>>> be7535561dd5536ee30888308f54d85c26630c64
 	private void listenForServerRequest() {
 //		Socket socket = null;
 		try {
