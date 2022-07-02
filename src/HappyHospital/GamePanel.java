@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 import java.awt.image.BufferedImage;
@@ -31,6 +32,7 @@ import classes.Agent;
 import classes.Agv;
 import classes.AutoAgv;
 import HappyHospital.*;
+import classes.Position;
 
 public class GamePanel extends JPanel implements ActionListener, Runnable {
 
@@ -54,6 +56,7 @@ public class GamePanel extends JPanel implements ActionListener, Runnable {
 //		2
 	static short nopath[] = views.nopath;
 	static short ground[] = views.ground;
+	private Position[] groundPos = {};
 	static short path[] = views.path;
 	static short room[] = views.room;
 	static short elevator[] = views.elevator;
@@ -146,7 +149,9 @@ public class GamePanel extends JPanel implements ActionListener, Runnable {
 		player[0] = new Agv(start_point_x[0] * BLOCKS_SIZE + BLOCKS_SIZE / 2, start_point_y[0] * BLOCKS_SIZE + BLOCKS_SIZE / 2, "", "");
 		player[1] = new Agv(start_point_x[1] * BLOCKS_SIZE + BLOCKS_SIZE / 2, start_point_y[1] * BLOCKS_SIZE + BLOCKS_SIZE / 2, "", "");
 		agents = new Agent[10];
-		agents[0] = new Agent(4, 3);
+		Position startPos = new Position(4, 3);
+		Position endPos = new Position(20, 20);
+		agents[0] = new Agent(startPos, endPos, groundPos, 1);
 		
 		timer = new Timer(Delay, this);
 		timer.start();
