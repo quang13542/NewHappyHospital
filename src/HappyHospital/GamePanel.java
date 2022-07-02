@@ -501,7 +501,7 @@ public class GamePanel extends JPanel implements ActionListener, Runnable {
 	}
 	
 	public ArrayList<Position> getGroundPos() {
-		if(this.groundPos == null) {
+		if(this.groundPos.isEmpty()) {
 			for(int i = 0; i < this.ground.length; i++) {
 				if(this.ground[i] == 1) {
 					int x = i%Constant.BLOCKS_WIDTH;

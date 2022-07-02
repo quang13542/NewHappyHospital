@@ -1,4 +1,4 @@
-bin/
+bin/*
 src/module-info.java
 .metadata/
 .idea
@@ -9,4 +9,9 @@ bin/algorithm/AStarSearch.class
 bin/classes/Actor.class
 bin/classes/AutoAgv.class
 bin/classes/Position.class
-
+/**/bin/**/*
+/./**/bin/**/*
+./**/bin/**/*
+**/bin/**/*
+*/bin/**/*
+bin/**/*

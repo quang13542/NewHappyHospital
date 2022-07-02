@@ -5,7 +5,7 @@ import structure.DynamicSpotArray;
 public class Spot {
 	public int i, j, g;
 	public double f, h;
-	public DynamicSpotArray neighbors;
+	public DynamicSpotArray neighbors = new DynamicSpotArray();
 	public Spot previous;			////
 	
 	public Spot(int i, int j){

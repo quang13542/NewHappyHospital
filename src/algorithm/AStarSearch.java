@@ -10,7 +10,7 @@ public class AStarSearch {
 	public Spot start, end;
 	public Spot[] ableSpot;
 	public Spot[][] grid;
-	public DynamicSpotArray path;
+	public DynamicSpotArray path = new DynamicSpotArray();
 	
 	public AStarSearch(int width, int height, Position startPos, Position endPos, ArrayList<Position> ablePos){
 		this.width = width;
@@ -47,6 +47,8 @@ public class AStarSearch {
 
 	private boolean isInclude(Spot spot, Spot[] spots) {
 	    for (int i = 0; i < spots.length; i++) {
+	    	Spot b = spots[i];
+	    	if(b == null) return false;
 	        if (spot.i == spots[i].i && spot.j == spots[i].j) return true;
 	    }
 	    return false;
