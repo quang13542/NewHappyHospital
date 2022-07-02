@@ -136,11 +136,12 @@ public class GamePanel extends JPanel implements ActionListener, Runnable {
 	  
 	public void createRandomAgents() {
 		for(int i=0; i < this.numberAgent; i++) {
+			int lenGroundPos = this.groundPos.size();
 			int startPosIndex = utils.getRandomNumber(0, this.groundPos.size());
 			int endPosIndex = utils.getRandomNumber(0, this.groundPos.size());
 			Position startPos = this.groundPos.get(startPosIndex);
 			Position endPos = this.groundPos.get(endPosIndex);
-			this.agents[i] = new Agent(startPos, endPos, this.groundPos, i);
+			this.agents[i] = new Agent(startPos, endPos, this.groundPos,  i + startPosIndex % 100);
 		}
 		
 	}
@@ -192,9 +193,24 @@ public class GamePanel extends JPanel implements ActionListener, Runnable {
 	}
 	
 	private void drawAgent(Graphics2D g2d) {
-		for(Agent agent: this.agents) {
-			g2d.drawImage(agentpng, agent.getX()*BLOCKS_SIZE, agent.getY()*BLOCKS_SIZE, this);
-			g2d.drawString("DES_" + agent.getId(), BLOCKS_SIZE * 20, BLOCKS_SIZE * 20);
+		for(int i = 0; i < this.numberAgent; i++) {
+			Agent agent = this.agents[i];
+			if(agent.active) {
+				g2d.setColor(Color.BLACK);
+				Font font = new Font("Arial", Font.BOLD, 20);
+				g2d.setFont(font);
+				Position currentPos = agent.getCurrentPos();
+				g2d.drawImage(agentpng, currentPos.x, currentPos.y, this);
+				g2d.drawString(String.valueOf(agent.getId()),  currentPos.x, currentPos.y);
+				g2d.drawString(String.valueOf(agent.getId()), agent.getEndPos().x * BLOCKS_SIZE, agent.getEndPos().y * BLOCKS_SIZE);
+			}else {
+				int lenGroundPos = this.groundPos.size();
+				int startPosIndex = utils.getRandomNumber(0, this.groundPos.size());
+				int endPosIndex = utils.getRandomNumber(0, this.groundPos.size());
+				Position startPos = this.groundPos.get(startPosIndex);
+				Position endPos = this.groundPos.get(endPosIndex);
+				agents[i] = new Agent(startPos, endPos, this.groundPos, i + startPosIndex % 100);
+			}
 		}
 	}
 
