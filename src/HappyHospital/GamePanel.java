@@ -15,18 +15,24 @@ import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 import java.util.Scanner;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import classes.AStar;
+import classes.AutoAgv;
 import classes.agv;
 
 public class GamePanel extends JPanel implements ActionListener, Runnable{
@@ -36,11 +42,12 @@ public class GamePanel extends JPanel implements ActionListener, Runnable{
 	static final int BLOCKS_WIDTH = 52;
 	static final int BLOCKS_HEIGHT = 28;
 	static final int BLOCKS_SIZE = 25; //32;  should be odd for better performance
-	static final int SCREEN_WIDTH = 52 * BLOCKS_SIZE;
-	static final int SCREEN_HEIGHT = 28 * BLOCKS_SIZE;
+	static final int SCREEN_WIDTH = BLOCKS_WIDTH * BLOCKS_SIZE;
+	static final int SCREEN_HEIGHT = BLOCKS_HEIGHT * BLOCKS_SIZE;
 	static final int dir_x[] = {0, 1, 0, -1};
 	static final int dir_y[] = {-1, 0, 1, 0};
 	static final int Delay = 10;
+	static int id_road = 0;
 	
 	private int player_id = -1;
 // direction id
@@ -68,8 +75,10 @@ public class GamePanel extends JPanel implements ActionListener, Runnable{
 	
 	private Timer timer;
 	private int start_point_x[] = {1, 1};
-	private int start_point_y[] = {14, 13};
+	private int start_point_y[] = {13, 14};
 	private agv player[];
+	private int number_autoagv = 4;
+	private AutoAgv[] bot = new AutoAgv[number_autoagv]; 
 	
 	private Image wallpng, dooruppng, doordownpng, doorrightpng, doorleftpng, bedpng, gatepng, elevatorpng, roompng, groundpng, agvpng;
 	
@@ -85,21 +94,16 @@ public class GamePanel extends JPanel implements ActionListener, Runnable{
 	
 	private boolean accepted = false;
 	private boolean unableToCommunicateWithOpponent = false;
-	private boolean won = false;
-	private boolean enemyWon = false;
-	private boolean tie = false;
 	
 	private Font font = new Font("Verdana", Font.BOLD, 32);
 	private Font smallerFont = new Font("Verdana", Font.BOLD, 20);
-	private Font largerFont = new Font("Verdana", Font.BOLD, 50);
 
 	private String waitingString = "Waiting for another player";
 	private String unableToCommunicateWithOpponentString = "Unable to communicate with opponent.";
-	private String wonString = "You won!";
-	private String enemyWonString = "Opponent won!";
-	private String tieString = "Game ended in a tie.";
 	
 	private int errors = 0;
+	
+	private String game_mode = "PvP";
 	
 	
 	GamePanel(){
@@ -110,6 +114,10 @@ public class GamePanel extends JPanel implements ActionListener, Runnable{
 	
 	private void initVariables() {
 	
+//		System.out.println("Choose Game Mode(PvP or PvE): ");
+//		game_mode = scanner.nextLine();
+//		System.out.println(game_mode=="PvP");
+		game_mode = "PvP";
 //		System.out.println("Please input the IP: ");
 //		ip = scanner.nextLine();
 //		System.out.println("Please input the port: ");
@@ -123,14 +131,56 @@ public class GamePanel extends JPanel implements ActionListener, Runnable{
 		addKeyListener(new TAdapter());
         d = new Dimension(0, 0);
         
-        player[0] = new agv(start_point_x[0]*BLOCKS_SIZE + BLOCKS_SIZE/2,start_point_y[0]*BLOCKS_SIZE + BLOCKS_SIZE/2);
-        player[1] = new agv(start_point_x[1]*BLOCKS_SIZE + BLOCKS_SIZE/2,start_point_y[1]*BLOCKS_SIZE + BLOCKS_SIZE/2);
+        player[0] = new agv(start_point_x[0]*BLOCKS_SIZE + BLOCKS_SIZE/2,start_point_y[0]*BLOCKS_SIZE + BLOCKS_SIZE/2, BLOCKS_SIZE);
+        player[1] = new agv(start_point_x[1]*BLOCKS_SIZE + BLOCKS_SIZE/2,start_point_y[1]*BLOCKS_SIZE + BLOCKS_SIZE/2, BLOCKS_SIZE);
+    	for(int i=0; i<number_autoagv; i++)
+    	{
+    		
+        	bot[i] = new AutoAgv(start_point_x[1]*BLOCKS_SIZE + BLOCKS_SIZE/2,start_point_y[1]*BLOCKS_SIZE + BLOCKS_SIZE/2, BLOCKS_SIZE);
+	        AStar astar_road1,astar_road2;
+	        astar_road1 = new AStar(start_point_x[1]*BLOCKS_SIZE,start_point_y[1]*BLOCKS_SIZE,bot[i].get_des_x()*BLOCKS_SIZE,bot[i].get_des_y()*BLOCKS_SIZE,BLOCKS_SIZE);
+	        astar_road2 = new AStar(bot[i].get_des_x()*BLOCKS_SIZE, bot[i].get_des_y()*BLOCKS_SIZE, (BLOCKS_WIDTH-2)*BLOCKS_SIZE, start_point_y[1]*BLOCKS_SIZE, BLOCKS_SIZE);
+	        Queue<Integer> path_x1 = astar_road1.get_path_x();
+	        Queue<Integer> path_y1 = astar_road1.get_path_y();
+	        Queue<Integer> path_x2 = astar_road2.get_path_x();
+	        Queue<Integer> path_y2 = astar_road2.get_path_y();
+	        Queue<Integer> path_x = new LinkedList<>();
+	        Queue<Integer> path_y = new LinkedList<>();
+	        
+	        while(!path_x1.isEmpty()) {
+	        	path_x.add(path_x1.peek());
+	        	path_x1.remove();
+	        }
+	        while(!path_y1.isEmpty()) {
+	        	path_y.add(path_y1.peek());
+	        	path_y1.remove();
+	        }
+	        while(!path_x2.isEmpty()) {
+	        	path_x.add(path_x2.peek());
+	        	path_x2.remove();
+	        }
+	        while(!path_y2.isEmpty()) {
+	        	path_y.add(path_y2.peek());
+	        	path_y2.remove();
+	        }
+//	        Queue<Integer> tmp_x = path_x;
+//	        Queue<Integer> tmp_y = path_y;
+//	        while(!path_x.isEmpty()) {
+//	        	System.out.println(path_x.peek());
+//	        	System.out.println(path_y.peek());
+//	        	path_y.remove();
+//	        	path_x.remove();
+//	        }
+	        bot[i].set_path_x(path_x);
+	        bot[i].set_path_y(path_y);
+    	}
         
         timer = new Timer(Delay,this);
 		timer.start();
         
-		if (!connect()) initializeServer();
-                 
+		if (game_mode == "PvP" && !connect()) {
+			initializeServer();
+		}                 
 		thread = new Thread(this, "HappyHospital");
 		thread.start();
 		
@@ -144,11 +194,29 @@ public class GamePanel extends JPanel implements ActionListener, Runnable{
 	    return resizedImage;
 	}
 	
-	
-	
 	private void drawagv(Graphics2D g2d) {
 		g2d.drawImage(agvpng, player[player_id].getX() - BLOCKS_SIZE/2, player[player_id].getY() - BLOCKS_SIZE/2, this);
+		g2d.setColor(Color.green);
+		g2d.setFont(new Font("Verdana", Font.BOLD, 15));
+		g2d.drawString("AGV", player[player_id].getX() - 2*BLOCKS_SIZE/3, player[player_id].getY() - BLOCKS_SIZE/2);
 		g2d.drawImage(agvpng, player[1-player_id].getX() - BLOCKS_SIZE/2, player[1-player_id].getY() - BLOCKS_SIZE/2, this);
+		g2d.setColor(Color.red);
+		g2d.setFont(new Font("Verdana", Font.BOLD, 15));
+		g2d.drawString("AGV", player[1-player_id].getX() - 2*BLOCKS_SIZE/3, player[1-player_id].getY() - BLOCKS_SIZE/2);
+		for(int i=0; i<number_autoagv; i++) {
+			g2d.drawImage(agvpng, bot[i].getX() - BLOCKS_SIZE/2, bot[i].getY() - BLOCKS_SIZE/2, this);
+			g2d.setColor(Color.blue);
+			g2d.setFont(new Font("Verdana", Font.BOLD, 15));
+			g2d.drawString("AGV", bot[i].getX() - 2*BLOCKS_SIZE/3, bot[i].getY() - BLOCKS_SIZE/2);
+		}
+	}
+	
+	private void drawAutoAgv(Graphics2D g2d) {
+		for(int i=0; i<number_autoagv; i++) {
+			g2d.setFont(new Font("Verdana", Font.BOLD, 3*BLOCKS_SIZE/5));
+			g2d.setColor(Color.blue);
+			g2d.drawString("DES", bot[i].get_des_x()*BLOCKS_SIZE - BLOCKS_SIZE/6, bot[i].get_des_y()*BLOCKS_SIZE+BLOCKS_SIZE/2);
+		}
 	}
 	
 	private void drawHospital(Graphics2D g2d) {
@@ -291,14 +359,9 @@ public class GamePanel extends JPanel implements ActionListener, Runnable{
 	
 	        drawHospital(g2d);
 	        drawagv(g2d);
+	        drawAutoAgv(g2d);
 	
-	//        if (inGame) {
-	//            playGame(g2d);
-	//        } else {
-	//            showIntroScreen(g2d);
-	//        }
-	
-	        g2d.drawImage(ii, 5, 5, this);
+			g2d.drawImage(ii, 5, 5, this);
 	        Toolkit.getDefaultToolkit().sync();
 	        g2d.dispose();
 		}
@@ -319,6 +382,8 @@ public class GamePanel extends JPanel implements ActionListener, Runnable{
 	
 	private void step() {
 		int pos = (int)( (player[Math.max(0, player_id)].getX()) / BLOCKS_SIZE ) + ( (int)( (player[Math.max(0, player_id)].getY() ) / BLOCKS_SIZE ) ) * BLOCKS_WIDTH;
+		int cur_x = player[Math.max(0, player_id)].getX();
+		int cur_y = player[Math.max(0, player_id)].getY();
 		if(path[pos] == 12 || path[pos] == 20 || path[pos] == 28 || path[pos] == 36) {
 			player[Math.max(0, player_id)].move(path[pos]);
 		}
@@ -339,17 +404,63 @@ public class GamePanel extends JPanel implements ActionListener, Runnable{
 					path[(player[Math.max(0, player_id)].getX() +dir_x[0]*BLOCKS_SIZE)/BLOCKS_SIZE + ((int)((player[Math.max(0, player_id)].getY() +dir_y[0]*BLOCKS_SIZE)/BLOCKS_SIZE))*BLOCKS_WIDTH],
 					path[(player[Math.max(0, player_id)].getX() +dir_x[1]*BLOCKS_SIZE)/BLOCKS_SIZE + ((int)((player[Math.max(0, player_id)].getY() +dir_y[1]*BLOCKS_SIZE)/BLOCKS_SIZE))*BLOCKS_WIDTH]); 
 		}
-		if(pos != (int)( (player[Math.max(0, player_id)].getX()) / BLOCKS_SIZE ) + ( (int)( (player[Math.max(0, player_id)].getY() ) / BLOCKS_SIZE ) ) * BLOCKS_WIDTH) 
+		if(game_mode == "PvP" && ( player[Math.max(0, player_id)].getX() != cur_x || player[Math.max(0, player_id)].getY() != cur_y) ) 
 		{
 			try {
-				dos.writeInt(pos);
+				dos.writeInt(player[Math.max(0, player_id)].getX() + player[Math.max(0, player_id)].getY()*SCREEN_WIDTH);
 				dos.flush();
 			} catch (IOException e1) {
 				errors++;
 				e1.printStackTrace();
 			}
 		}
-		repaint( player[Math.max(0, player_id)].getX() - BLOCKS_SIZE/2 , player[Math.max(0, player_id)].getY() - BLOCKS_SIZE/2, BLOCKS_SIZE + 2, BLOCKS_SIZE + 2);
+		for(int i=0; i<number_autoagv; i++) {
+//			System.out.println(bot[i].getX());
+//			System.out.println(bot[i].getY());
+			if(bot[i].getX()==(BLOCKS_WIDTH-2)*BLOCKS_SIZE + BLOCKS_SIZE/2 && bot[i].getY()==start_point_y[1]*BLOCKS_SIZE+BLOCKS_SIZE/2) 
+			{
+				bot[i] = new AutoAgv(start_point_x[1]*BLOCKS_SIZE + BLOCKS_SIZE/2,start_point_y[1]*BLOCKS_SIZE + BLOCKS_SIZE/2, BLOCKS_SIZE);
+		        AStar astar_road1,astar_road2;
+		        astar_road1 = new AStar(start_point_x[1]*BLOCKS_SIZE,start_point_y[1]*BLOCKS_SIZE,bot[i].get_des_x()*BLOCKS_SIZE,bot[i].get_des_y()*BLOCKS_SIZE,BLOCKS_SIZE);
+		        astar_road2 = new AStar(bot[i].get_des_x()*BLOCKS_SIZE, bot[i].get_des_y()*BLOCKS_SIZE, (BLOCKS_WIDTH-2)*BLOCKS_SIZE, start_point_y[1]*BLOCKS_SIZE, BLOCKS_SIZE);
+		        Queue<Integer> path_x1 = astar_road1.get_path_x();
+		        Queue<Integer> path_y1 = astar_road1.get_path_y();
+		        Queue<Integer> path_x2 = astar_road2.get_path_x();
+		        Queue<Integer> path_y2 = astar_road2.get_path_y();
+		        Queue<Integer> path_x = new LinkedList<>();
+		        Queue<Integer> path_y = new LinkedList<>();
+		        
+		        while(!path_x1.isEmpty()) {
+		        	path_x.add(path_x1.peek());
+		        	path_x1.remove();
+		        }
+		        while(!path_y1.isEmpty()) {
+		        	path_y.add(path_y1.peek());
+		        	path_y1.remove();
+		        }
+		        while(!path_x2.isEmpty()) {
+		        	path_x.add(path_x2.peek());
+		        	path_x2.remove();
+		        }
+		        while(!path_y2.isEmpty()) {
+		        	path_y.add(path_y2.peek());
+		        	path_y2.remove();
+		        }
+//		        Queue<Integer> tmp_x = path_x;
+//		        Queue<Integer> tmp_y = path_y;
+//		        while(!path_x.isEmpty()) {
+//		        	System.out.println(path_x.peek());
+//		        	System.out.println(path_y.peek());
+//		        	path_y.remove();
+//		        	path_x.remove();
+//		        }
+		        bot[i].set_path_x(path_x);
+		        bot[i].set_path_y(path_y);
+			}
+			else bot[i].move();
+			
+		}
+		repaint();
 	}
 	
 	
@@ -372,58 +483,43 @@ public class GamePanel extends JPanel implements ActionListener, Runnable{
     }
 	
 	public void run() {
-		while (true) {
-			tick();
-			repaint();
-
-			if (!accepted) {
-				listenForServerRequest();
+		if(game_mode == "PvP") {
+			while (true) {
+				tick();
+				repaint();
+	
+				if (!accepted) {
+					listenForServerRequest();
+				}
+	
 			}
-
 		}
 	}
 	
 	void tick()
 	{
 		if (errors >= 10) unableToCommunicateWithOpponent = true;
-
-		if (!unableToCommunicateWithOpponent) {
-//			try {
+		if (!unableToCommunicateWithOpponent && accepted) {
+			try {
 				
-//				int pos = dis.readInt();
-//				int y = pos / BLOCKS_WIDTH * BLOCKS_SIZE;
-//				int x = (pos - y/BLOCKS_WIDTH * BLOCKS_SIZE) * BLOCKS_SIZE;
-//				if (circle) spaces[space] = "X";
-//				else spaces[space] = "O";
-//				player[1-player_id].setX(x);
-//				player[1-player_id].setY(y);
-				checkForTie();
-				checkForEnemyWin();
-				checkForWin();
-//			} 
-//			catch (IOException e) {
-//				e.printStackTrace();
-//				errors++;
-//			}
+				int pos = dis.readInt();
+				int y = pos / SCREEN_WIDTH;
+				int x = pos - y*SCREEN_WIDTH;			
+				player[1-player_id].setX(x);
+				player[1-player_id].setY(y);
+				repaint();
+//				checkForTie();
+//				checkForEnemyWin();
+			} 
+			catch (IOException e) {
+				e.printStackTrace();
+				errors++;
+			}
 		}
 	}
 	
-	
-	
-	private void checkForWin() {
-		
-	}
-	
-	private void checkForEnemyWin() {
-		
-	}
-	
-	private void checkForTie() {
-		
-	}
-	
 	private void listenForServerRequest() {
-		Socket socket = null;
+//		Socket socket = null;
 		try {
 			socket = serverSocket.accept();
 			dos = new DataOutputStream(socket.getOutputStream());
@@ -457,8 +553,6 @@ public class GamePanel extends JPanel implements ActionListener, Runnable{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-//		yourTurn = true;
-//		circle = false;
 	}
 
 	
