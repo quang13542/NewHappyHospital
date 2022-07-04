@@ -1,1 +1,9 @@
+<<<<<<< HEAD
 /bin/
+=======
+bin/*
+src/module-info.java
+.metadata/
+.idea
+HappyHospital.iml
+>>>>>>> mungvt
