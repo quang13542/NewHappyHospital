@@ -13,8 +13,6 @@ public class Agent extends Actor {
 	private ArrayList<Position> groundPos;
 	private Position[] path;
 	private ArrayList<Position> vertexs = new ArrayList<>();
-	private Text endText;
-	private Text agentText;
 	private AStarSearch astar;
 	private int next = 1;
 	private int id;

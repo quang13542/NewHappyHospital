@@ -1,22 +1,4 @@
-<<<<<<< HEAD
 package algorithm;
-
-import structure.DynamicSpotArray;
-
-public class Spot {
-	public int i, j, g;
-	public double f, h;
-	public DynamicSpotArray neighbors;
-	public Spot previous;			////
-	
-	public Spot(int i, int j){
-		this.i = i;
-		this.j = j;
-		this.f = 0;
-		this.g = 0;
-=======
-package algorithm;
-
 import structure.DynamicSpotArray;
 
 public class Spot {
@@ -30,7 +12,6 @@ public class Spot {
 		this.j = j;
 		this.f = 0;
 		this.g = 0;
->>>>>>> mungvt
 		this.h = 0;
 	}
 	

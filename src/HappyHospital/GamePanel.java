@@ -84,13 +84,14 @@ public class GamePanel extends JPanel implements ActionListener, Runnable {
 
 	private Timer timer;
 	private int start_point_x[] = { 1, 1 };
-	private int start_point_y[] = {13, 14};
+	private int start_point_y[] = { 13, 14 };
 	private Agv player[];
 	private int number_autoagv = 4;
 	private Agent[] agents = new Agent[this.numberAgent];
-	private AutoAgv[] bot = new AutoAgv[number_autoagv]; 
+	private AutoAgv[] bot = new AutoAgv[number_autoagv];
 
-	private Image wallpng, dooruppng, doordownpng, doorrightpng, doorleftpng, bedpng, gatepng, elevatorpng, roompng, groundpng, agvpng, agentpng;
+	private Image wallpng, dooruppng, doordownpng, doorrightpng, doorleftpng, bedpng, gatepng, elevatorpng, roompng,
+			groundpng, agvpng, agentpng;
 	private String ip = "localhost";
 	private int port = 22222;
 	private Scanner scanner = new Scanner(System.in);
@@ -127,37 +128,19 @@ public class GamePanel extends JPanel implements ActionListener, Runnable {
 		initBoard();
 	}
 
-//     private void createRandomAutoAgv() {
-//	    double r = Math.floor(Math.random() * this.path.length);
-//	    while (!Constant.validDestination(this.pathPos[r].x, this.pathPos[r].y, 1, 13)) {
-//	      r = Math.floor(Math.random() * this.pathPos.length);
-//	    }
-//	    if (this.graph) {
-//	      var tempAgv = new AutoAgv(this, 1, 13, this.pathPos[r].x, this.pathPos[r].y, this.graph);
-//	      this.timeTable && tempAgv.writeDeadline(this.timeTable);
-//	      var des = document.getElementById("des");
-//	      if (des) {
-//	        while (des.childNodes.length >= 1) {
-//	          des.firstChild && des.removeChild(des.firstChild);
-//	        }
-//
-//	        des.appendChild(des.ownerDocument.createTextNode(this.timeTable?.text || ""));
-//	      }
-//	      this.autoAgvs.add(tempAgv);
-//	    }
-//	  }
-	  
+
 	public void createRandomAgents() {
-		for(int i=0; i < this.numberAgent; i++) {
+		for (int i = 0; i < this.numberAgent; i++) {
 			int lenGroundPos = this.groundPos.size();
 			int startPosIndex = utils.getRandomNumber(0, this.groundPos.size());
 			int endPosIndex = utils.getRandomNumber(0, this.groundPos.size());
 			Position startPos = this.groundPos.get(startPosIndex);
 			Position endPos = this.groundPos.get(endPosIndex);
-			this.agents[i] = new Agent(startPos, endPos, this.groundPos,  i + startPosIndex % 100);
+			this.agents[i] = new Agent(startPos, endPos, this.groundPos, i + startPosIndex % 100);
 		}
-		
+
 	}
+
 	private void initVariables() {
 
 //		System.out.println("Choose Game Mode(PvP or PvE): ");
@@ -177,11 +160,10 @@ public class GamePanel extends JPanel implements ActionListener, Runnable {
 		addKeyListener(new TAdapter());
 		d = new Dimension(0, 0);
 		// init AGV
-		player[0] = new Agv(start_point_x[0] * BLOCKS_SIZE + BLOCKS_SIZE / 2, start_point_y[0] * BLOCKS_SIZE + BLOCKS_SIZE / 2, "", "");
-		player[1] = new Agv(start_point_x[1] * BLOCKS_SIZE + BLOCKS_SIZE / 2, start_point_y[1] * BLOCKS_SIZE + BLOCKS_SIZE / 2, "", "");
+		player[0] = new Agv(start_point_x[0] * BLOCKS_SIZE + BLOCKS_SIZE / 2, start_point_y[0] * BLOCKS_SIZE + BLOCKS_SIZE / 2, BLOCKS_SIZE);
+		player[1] = new Agv(start_point_x[1] * BLOCKS_SIZE + BLOCKS_SIZE / 2, start_point_y[1] * BLOCKS_SIZE + BLOCKS_SIZE / 2, BLOCKS_SIZE);
 
-		for(int i=0; i<number_autoagv; i++)
-    	{
+		for(int i=0; i<number_autoagv; i++){
     		
         	bot[i] = new AutoAgv(start_point_x[1]*BLOCKS_SIZE + BLOCKS_SIZE/2,start_point_y[1]*BLOCKS_SIZE + BLOCKS_SIZE/2, BLOCKS_SIZE);
 	        AStar astar_road1,astar_road2;
@@ -210,14 +192,6 @@ public class GamePanel extends JPanel implements ActionListener, Runnable {
 	        	path_y.add(path_y2.peek());
 	        	path_y2.remove();
 	        }
-//	        Queue<Integer> tmp_x = path_x;
-//	        Queue<Integer> tmp_y = path_y;
-//	        while(!path_x.isEmpty()) {
-//	        	System.out.println(path_x.peek());
-//	        	System.out.println(path_y.peek());
-//	        	path_y.remove();
-//	        	path_x.remove();
-//	        }
 	        bot[i].set_path_x(path_x);
 	        bot[i].set_path_y(path_y);
     	}
@@ -230,21 +204,8 @@ public class GamePanel extends JPanel implements ActionListener, Runnable {
 		}                 
 		thread = new Thread(this, "HappyHospital");
 		thread.start();
-		
-	}
-		
 		// init agents
 		this.createRandomAgents();
-		
-		timer = new Timer(Delay, this);
-		timer.start();
-
-		if (!connect())
-			initializeServer();
-
-		thread = new Thread(this, "HappyHospital");
-		thread.start();
-
 	}
 
 	private BufferedImage resizeImage(Image originalImage, int targetWidth, int targetHeight) {
@@ -256,43 +217,48 @@ public class GamePanel extends JPanel implements ActionListener, Runnable {
 	}
 
 	private void drawagv(Graphics2D g2d) {
-		g2d.drawImage(agvpng, player[player_id].getX() - BLOCKS_SIZE/2, player[player_id].getY() - BLOCKS_SIZE/2, this);
+		g2d.drawImage(agvpng, player[player_id].getX() - BLOCKS_SIZE / 2, player[player_id].getY() - BLOCKS_SIZE / 2,
+				this);
 		g2d.setColor(Color.green);
 		g2d.setFont(new Font("Verdana", Font.BOLD, 15));
-		g2d.drawString("AGV", player[player_id].getX() - 2*BLOCKS_SIZE/3, player[player_id].getY() - BLOCKS_SIZE/2);
-		g2d.drawImage(agvpng, player[1-player_id].getX() - BLOCKS_SIZE/2, player[1-player_id].getY() - BLOCKS_SIZE/2, this);
+		g2d.drawString("AGV", player[player_id].getX() - 2 * BLOCKS_SIZE / 3,
+				player[player_id].getY() - BLOCKS_SIZE / 2);
+		g2d.drawImage(agvpng, player[1 - player_id].getX() - BLOCKS_SIZE / 2,
+				player[1 - player_id].getY() - BLOCKS_SIZE / 2, this);
 		g2d.setColor(Color.red);
 		g2d.setFont(new Font("Verdana", Font.BOLD, 15));
-		g2d.drawString("AGV", player[1-player_id].getX() - 2*BLOCKS_SIZE/3, player[1-player_id].getY() - BLOCKS_SIZE/2);
-		for(int i=0; i<number_autoagv; i++) {
-			g2d.drawImage(agvpng, bot[i].getX() - BLOCKS_SIZE/2, bot[i].getY() - BLOCKS_SIZE/2, this);
+		g2d.drawString("AGV", player[1 - player_id].getX() - 2 * BLOCKS_SIZE / 3,
+				player[1 - player_id].getY() - BLOCKS_SIZE / 2);
+		for (int i = 0; i < number_autoagv; i++) {
+			g2d.drawImage(agvpng, bot[i].getX() - BLOCKS_SIZE / 2, bot[i].getY() - BLOCKS_SIZE / 2, this);
 			g2d.setColor(Color.blue);
 			g2d.setFont(new Font("Verdana", Font.BOLD, 15));
-			g2d.drawString("AGV", bot[i].getX() - 2*BLOCKS_SIZE/3, bot[i].getY() - BLOCKS_SIZE/2);
+			g2d.drawString("AGV", bot[i].getX() - 2 * BLOCKS_SIZE / 3, bot[i].getY() - BLOCKS_SIZE / 2);
 		}
 	}
 
 	private void drawAutoAgv(Graphics2D g2d) {
-		for(int i=0; i<number_autoagv; i++) {
-			g2d.setFont(new Font("Verdana", Font.BOLD, 3*BLOCKS_SIZE/5));
+		for (int i = 0; i < number_autoagv; i++) {
+			g2d.setFont(new Font("Verdana", Font.BOLD, 3 * BLOCKS_SIZE / 5));
 			g2d.setColor(Color.blue);
-			g2d.drawString("DES", bot[i].get_des_x()*BLOCKS_SIZE - BLOCKS_SIZE/6, bot[i].get_des_y()*BLOCKS_SIZE+BLOCKS_SIZE/2);
+			g2d.drawString("DES", bot[i].get_des_x() * BLOCKS_SIZE - BLOCKS_SIZE / 6,
+					bot[i].get_des_y() * BLOCKS_SIZE + BLOCKS_SIZE / 2);
 		}
 	}
 
-	
 	private void drawAgent(Graphics2D g2d) {
-		for(int i = 0; i < this.numberAgent; i++) {
+		for (int i = 0; i < this.numberAgent; i++) {
 			Agent agent = this.agents[i];
-			if(agent.active) {
+			if (agent.active) {
 				g2d.setColor(Color.BLACK);
 				Font font = new Font("Arial", Font.BOLD, 20);
 				g2d.setFont(font);
 				Position currentPos = agent.getCurrentPos();
 				g2d.drawImage(agentpng, currentPos.x, currentPos.y, this);
-				g2d.drawString(String.valueOf(agent.getId()),  currentPos.x, currentPos.y);
-				g2d.drawString(String.valueOf(agent.getId()), agent.getEndPos().x * BLOCKS_SIZE, agent.getEndPos().y * BLOCKS_SIZE);
-			}else {
+				g2d.drawString(String.valueOf(agent.getId()), currentPos.x, currentPos.y);
+				g2d.drawString(String.valueOf(agent.getId()), agent.getEndPos().x * BLOCKS_SIZE,
+						agent.getEndPos().y * BLOCKS_SIZE);
+			} else {
 				int lenGroundPos = this.groundPos.size();
 				int startPosIndex = utils.getRandomNumber(0, this.groundPos.size());
 				int endPosIndex = utils.getRandomNumber(0, this.groundPos.size());
@@ -465,71 +431,83 @@ public class GamePanel extends JPanel implements ActionListener, Runnable {
 	}
 
 	private void step() {
-		int pos = (int)( (player[Math.max(0, player_id)].getX()) / BLOCKS_SIZE ) + ( (int)( (player[Math.max(0, player_id)].getY() ) / BLOCKS_SIZE ) ) * BLOCKS_WIDTH;
+		int pos = (int) ((player[Math.max(0, player_id)].getX()) / BLOCKS_SIZE)
+				+ ((int) ((player[Math.max(0, player_id)].getY()) / BLOCKS_SIZE)) * BLOCKS_WIDTH;
 		int cur_x = player[Math.max(0, player_id)].getX();
 		int cur_y = player[Math.max(0, player_id)].getY();
-		if(path[pos] == 12 || path[pos] == 20 || path[pos] == 28 || path[pos] == 36) {
+		if (path[pos] == 12 || path[pos] == 20 || path[pos] == 28 || path[pos] == 36) {
 			player[Math.max(0, player_id)].move(path[pos]);
-		}
-		else {
-			String tmp="";
-			for(int id=0;id<4;id++) {
+		} else {
+			String tmp = "";
+			for (int id = 0; id < 4; id++) {
 				int pre_x = player[Math.max(0, player_id)].getX() + dir_x[id] * BLOCKS_SIZE;
 				int pre_y = player[Math.max(0, player_id)].getY() + dir_y[id] * BLOCKS_SIZE;
-				if(pre_x >= 0 && pre_x < SCREEN_WIDTH && pre_y >= 0 && pre_y < SCREEN_HEIGHT) {
-					if(path[pre_x/BLOCKS_SIZE + ((int)(pre_y/BLOCKS_SIZE))*BLOCKS_WIDTH] != 0) {
+				if (pre_x >= 0 && pre_x < SCREEN_WIDTH && pre_y >= 0 && pre_y < SCREEN_HEIGHT) {
+					if (path[pre_x / BLOCKS_SIZE + ((int) (pre_y / BLOCKS_SIZE)) * BLOCKS_WIDTH] != 0) {
 						tmp += String.valueOf(id);
 					}
 				}
 			}
-			player[Math.max(0, player_id)].move(tmp, BLOCKS_SIZE, 
-					path[(player[Math.max(0, player_id)].getX() +dir_x[2]*BLOCKS_SIZE)/BLOCKS_SIZE + ((int)((player[Math.max(0, player_id)].getY() +dir_y[2]*BLOCKS_SIZE)/BLOCKS_SIZE))*BLOCKS_WIDTH],
-					path[(player[Math.max(0, player_id)].getX() +dir_x[3]*BLOCKS_SIZE)/BLOCKS_SIZE + ((int)((player[Math.max(0, player_id)].getY() +dir_y[3]*BLOCKS_SIZE)/BLOCKS_SIZE))*BLOCKS_WIDTH],
-					path[(player[Math.max(0, player_id)].getX() +dir_x[0]*BLOCKS_SIZE)/BLOCKS_SIZE + ((int)((player[Math.max(0, player_id)].getY() +dir_y[0]*BLOCKS_SIZE)/BLOCKS_SIZE))*BLOCKS_WIDTH],
-					path[(player[Math.max(0, player_id)].getX() +dir_x[1]*BLOCKS_SIZE)/BLOCKS_SIZE + ((int)((player[Math.max(0, player_id)].getY() +dir_y[1]*BLOCKS_SIZE)/BLOCKS_SIZE))*BLOCKS_WIDTH]); 
+			player[Math.max(0, player_id)].move(tmp, BLOCKS_SIZE,
+					path[(player[Math.max(0, player_id)].getX() + dir_x[2] * BLOCKS_SIZE) / BLOCKS_SIZE
+							+ ((int) ((player[Math.max(0, player_id)].getY() + dir_y[2] * BLOCKS_SIZE) / BLOCKS_SIZE))
+									* BLOCKS_WIDTH],
+					path[(player[Math.max(0, player_id)].getX() + dir_x[3] * BLOCKS_SIZE) / BLOCKS_SIZE
+							+ ((int) ((player[Math.max(0, player_id)].getY() + dir_y[3] * BLOCKS_SIZE) / BLOCKS_SIZE))
+									* BLOCKS_WIDTH],
+					path[(player[Math.max(0, player_id)].getX() + dir_x[0] * BLOCKS_SIZE) / BLOCKS_SIZE
+							+ ((int) ((player[Math.max(0, player_id)].getY() + dir_y[0] * BLOCKS_SIZE) / BLOCKS_SIZE))
+									* BLOCKS_WIDTH],
+					path[(player[Math.max(0, player_id)].getX() + dir_x[1] * BLOCKS_SIZE) / BLOCKS_SIZE
+							+ ((int) ((player[Math.max(0, player_id)].getY() + dir_y[1] * BLOCKS_SIZE) / BLOCKS_SIZE))
+									* BLOCKS_WIDTH]);
 		}
-		if(game_mode == "PvP" && ( player[Math.max(0, player_id)].getX() != cur_x || player[Math.max(0, player_id)].getY() != cur_y) ) 
-		{
+		if (game_mode == "PvP"
+				&& (player[Math.max(0, player_id)].getX() != cur_x || player[Math.max(0, player_id)].getY() != cur_y)) {
 			try {
-				dos.writeInt(player[Math.max(0, player_id)].getX() + player[Math.max(0, player_id)].getY()*SCREEN_WIDTH);
+				dos.writeInt(
+						player[Math.max(0, player_id)].getX() + player[Math.max(0, player_id)].getY() * SCREEN_WIDTH);
 				dos.flush();
 			} catch (IOException e1) {
 				errors++;
 				e1.printStackTrace();
 			}
 		}
-		for(int i=0; i<number_autoagv; i++) {
+		for (int i = 0; i < number_autoagv; i++) {
 //			System.out.println(bot[i].getX());
 //			System.out.println(bot[i].getY());
-			if(bot[i].getX()==(BLOCKS_WIDTH-2)*BLOCKS_SIZE + BLOCKS_SIZE/2 && bot[i].getY()==start_point_y[1]*BLOCKS_SIZE+BLOCKS_SIZE/2) 
-			{
-				bot[i] = new AutoAgv(start_point_x[1]*BLOCKS_SIZE + BLOCKS_SIZE/2,start_point_y[1]*BLOCKS_SIZE + BLOCKS_SIZE/2, BLOCKS_SIZE);
-		        AStar astar_road1,astar_road2;
-		        astar_road1 = new AStar(start_point_x[1]*BLOCKS_SIZE,start_point_y[1]*BLOCKS_SIZE,bot[i].get_des_x()*BLOCKS_SIZE,bot[i].get_des_y()*BLOCKS_SIZE,BLOCKS_SIZE);
-		        astar_road2 = new AStar(bot[i].get_des_x()*BLOCKS_SIZE, bot[i].get_des_y()*BLOCKS_SIZE, (BLOCKS_WIDTH-2)*BLOCKS_SIZE, start_point_y[1]*BLOCKS_SIZE, BLOCKS_SIZE);
-		        Queue<Integer> path_x1 = astar_road1.get_path_x();
-		        Queue<Integer> path_y1 = astar_road1.get_path_y();
-		        Queue<Integer> path_x2 = astar_road2.get_path_x();
-		        Queue<Integer> path_y2 = astar_road2.get_path_y();
-		        Queue<Integer> path_x = new LinkedList<>();
-		        Queue<Integer> path_y = new LinkedList<>();
-		        
-		        while(!path_x1.isEmpty()) {
-		        	path_x.add(path_x1.peek());
-		        	path_x1.remove();
-		        }
-		        while(!path_y1.isEmpty()) {
-		        	path_y.add(path_y1.peek());
-		        	path_y1.remove();
-		        }
-		        while(!path_x2.isEmpty()) {
-		        	path_x.add(path_x2.peek());
-		        	path_x2.remove();
-		        }
-		        while(!path_y2.isEmpty()) {
-		        	path_y.add(path_y2.peek());
-		        	path_y2.remove();
-		        }
+			if (bot[i].getX() == (BLOCKS_WIDTH - 2) * BLOCKS_SIZE + BLOCKS_SIZE / 2
+					&& bot[i].getY() == start_point_y[1] * BLOCKS_SIZE + BLOCKS_SIZE / 2) {
+				bot[i] = new AutoAgv(start_point_x[1] * BLOCKS_SIZE + BLOCKS_SIZE / 2,
+						start_point_y[1] * BLOCKS_SIZE + BLOCKS_SIZE / 2, BLOCKS_SIZE);
+				AStar astar_road1, astar_road2;
+				astar_road1 = new AStar(start_point_x[1] * BLOCKS_SIZE, start_point_y[1] * BLOCKS_SIZE,
+						bot[i].get_des_x() * BLOCKS_SIZE, bot[i].get_des_y() * BLOCKS_SIZE, BLOCKS_SIZE);
+				astar_road2 = new AStar(bot[i].get_des_x() * BLOCKS_SIZE, bot[i].get_des_y() * BLOCKS_SIZE,
+						(BLOCKS_WIDTH - 2) * BLOCKS_SIZE, start_point_y[1] * BLOCKS_SIZE, BLOCKS_SIZE);
+				Queue<Integer> path_x1 = astar_road1.get_path_x();
+				Queue<Integer> path_y1 = astar_road1.get_path_y();
+				Queue<Integer> path_x2 = astar_road2.get_path_x();
+				Queue<Integer> path_y2 = astar_road2.get_path_y();
+				Queue<Integer> path_x = new LinkedList<>();
+				Queue<Integer> path_y = new LinkedList<>();
+
+				while (!path_x1.isEmpty()) {
+					path_x.add(path_x1.peek());
+					path_x1.remove();
+				}
+				while (!path_y1.isEmpty()) {
+					path_y.add(path_y1.peek());
+					path_y1.remove();
+				}
+				while (!path_x2.isEmpty()) {
+					path_x.add(path_x2.peek());
+					path_x2.remove();
+				}
+				while (!path_y2.isEmpty()) {
+					path_y.add(path_y2.peek());
+					path_y2.remove();
+				}
 //		        Queue<Integer> tmp_x = path_x;
 //		        Queue<Integer> tmp_y = path_y;
 //		        while(!path_x.isEmpty()) {
@@ -538,11 +516,11 @@ public class GamePanel extends JPanel implements ActionListener, Runnable {
 //		        	path_y.remove();
 //		        	path_x.remove();
 //		        }
-		        bot[i].set_path_x(path_x);
-		        bot[i].set_path_y(path_y);
-			}
-			else bot[i].move();
-			
+				bot[i].set_path_x(path_x);
+				bot[i].set_path_y(path_y);
+			} else
+				bot[i].move();
+
 		}
 		repaint();
 	}
@@ -567,33 +545,32 @@ public class GamePanel extends JPanel implements ActionListener, Runnable {
 	}
 
 	public void run() {
-		if(game_mode == "PvP") {
+		if (game_mode == "PvP") {
 			while (true) {
 				tick();
 				repaint();
-	
+
 				if (!accepted) {
 					listenForServerRequest();
 				}
-	
+
 			}
 		}
 	}
 
-	void tick()
-	{
-		if (errors >= 10) unableToCommunicateWithOpponent = true;
+	void tick() {
+		if (errors >= 10)
+			unableToCommunicateWithOpponent = true;
 		if (!unableToCommunicateWithOpponent && accepted) {
 			try {
-				
+
 				int pos = dis.readInt();
 				int y = pos / SCREEN_WIDTH;
-				int x = pos - y*SCREEN_WIDTH;			
-				player[1-player_id].setX(x);
-				player[1-player_id].setY(y);
+				int x = pos - y * SCREEN_WIDTH;
+				player[1 - player_id].setX(x);
+				player[1 - player_id].setY(y);
 				repaint();
-			} 
-			catch (IOException e) {
+			} catch (IOException e) {
 				e.printStackTrace();
 				errors++;
 			}
@@ -613,22 +590,23 @@ public class GamePanel extends JPanel implements ActionListener, Runnable {
 		}
 	}
 
-private boolean connect() {
+	private boolean connect() {
 		try {
 			socket = new Socket(ip, port);
 			dos = new DataOutputStream(socket.getOutputStream());
 			dis = new DataInputStream(socket.getInputStream());
 			accepted = true;
 		} catch (IOException e) {
-			if(player_id == -1) player_id = 0;
+			if (player_id == -1)
+				player_id = 0;
 			System.out.println("Unable to connect to the address: " + ip + ":" + port + " | Starting a server");
 			return false;
 		}
-		if(player_id == -1) player_id = 1;
+		if (player_id == -1)
+			player_id = 1;
 		System.out.println("Successfully connected to the server.");
 		return true;
 	}
-
 
 	private void initializeServer() {
 		try {
@@ -637,13 +615,13 @@ private boolean connect() {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public ArrayList<Position> getGroundPos() {
-		if(this.groundPos.isEmpty()) {
-			for(int i = 0; i < this.ground.length; i++) {
-				if(this.ground[i] == 1) {
-					int x = i%Constant.BLOCKS_WIDTH;
-					int y = (int)(i/Constant.BLOCKS_WIDTH);
+		if (this.groundPos.isEmpty()) {
+			for (int i = 0; i < this.ground.length; i++) {
+				if (this.ground[i] == 1) {
+					int x = i % Constant.BLOCKS_WIDTH;
+					int y = (int) (i / Constant.BLOCKS_WIDTH);
 					Position thisPos = new Position(x, y);
 					this.groundPos.add(thisPos);
 				}

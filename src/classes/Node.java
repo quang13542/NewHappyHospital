@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-package classes;
-
-public class Node {
-
-}
-=======
 package classes;
 
 import constant.*;
@@ -134,4 +127,3 @@ public class Node {
     this.w = (1 - lambda) * this.w + lambda * this.u;
   }
 }
->>>>>>> mungvt

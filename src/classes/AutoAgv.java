@@ -7,7 +7,7 @@ import java.util.Random;
 
 import classes.AStar;
 
-public class AutoAgv extends agv{
+public class AutoAgv extends Agv{
 
 	private Queue<Integer> path_x = new LinkedList<>();
 	private Queue<Integer> path_y = new LinkedList<>();
